@@ -18,7 +18,7 @@ final class TrackerViewController: UIViewController {
         
         let button = UIButton.systemButton(with: buttonImage,
                                            target: self,
-                                           action: #selector(PlusbuttonTapped(_ :)))
+                                           action: #selector(PlusButtonTapped(_ :)))
         return button
     }()
     private lazy var dateLabel: UILabel = {
@@ -71,7 +71,7 @@ final class TrackerViewController: UIViewController {
     }
     
     //MARK: Actions
-    @objc private func PlusbuttonTapped(_ sender: UIButton) {
+    @objc private func PlusButtonTapped(_ sender: UIButton) {
     }
     
     //MARK: Private Methods
