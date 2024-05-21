@@ -260,6 +260,7 @@ extension UnregularEventViewController: UITableViewDataSource {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         cell.textLabel?.text = categories[indexPath.row]
         cell.backgroundColor = .backgroundDayIOS
+        cell.selectionStyle = .none
         
         let chevronImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 7, height: 12))
         chevronImage.image = UIImage(named: "chevron")

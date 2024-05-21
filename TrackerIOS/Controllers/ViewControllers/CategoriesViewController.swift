@@ -9,7 +9,6 @@ import UIKit
 
 final class CategoriesViewController: UIViewController {
     
-    
     //MARK: Private properties
     
     var updateCategory: ( (String) -> Void)?
