@@ -14,6 +14,7 @@
 		EB0A61D72BB6B7A400D87507 /* Extensions + UIimage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0A61D62BB6B7A400D87507 /* Extensions + UIimage.swift */; };
 		EB0BC6D72BD11DEF0096D5F5 /* ScheduleViewConroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0BC6D62BD11DEF0096D5F5 /* ScheduleViewConroller.swift */; };
 		EB0BC6D92BD1247F0096D5F5 /* CreateNewCategoryViewContoller.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0BC6D82BD1247F0096D5F5 /* CreateNewCategoryViewContoller.swift */; };
+		EB150CE02C04933E0040F11D /* TrackersDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EB150CDE2C04933E0040F11D /* TrackersDB.xcdatamodeld */; };
 		EB1767A42BDA3B1C009DCDBE /* CategoryDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1767A32BDA3B1C009DCDBE /* CategoryDB.swift */; };
 		EB38E1F52B9F482900DF50B0 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB38E1F42B9F482900DF50B0 /* TabBarController.swift */; };
 		EB38E1F82B9F60C100DF50B0 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB38E1F72B9F60C100DF50B0 /* StatisticsViewController.swift */; };
@@ -37,6 +38,7 @@
 		EB0A61D62BB6B7A400D87507 /* Extensions + UIimage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions + UIimage.swift"; sourceTree = "<group>"; };
 		EB0BC6D62BD11DEF0096D5F5 /* ScheduleViewConroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewConroller.swift; sourceTree = "<group>"; };
 		EB0BC6D82BD1247F0096D5F5 /* CreateNewCategoryViewContoller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewCategoryViewContoller.swift; sourceTree = "<group>"; };
+		EB150CDF2C04933E0040F11D /* TrackersDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TrackersDB.xcdatamodel; sourceTree = "<group>"; };
 		EB1767A32BDA3B1C009DCDBE /* CategoryDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDB.swift; sourceTree = "<group>"; };
 		EB38E1F42B9F482900DF50B0 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		EB38E1F72B9F60C100DF50B0 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 				EB70A0632B9EF184009EFEFC /* Assets.xcassets */,
 				EB70A0652B9EF184009EFEFC /* LaunchScreen.storyboard */,
 				EB70A0682B9EF184009EFEFC /* Info.plist */,
+				EB150CDE2C04933E0040F11D /* TrackersDB.xcdatamodeld */,
 			);
 			path = TrackerIOS;
 			sourceTree = "<group>";
@@ -246,6 +249,7 @@
 				EB0A61D12BB6A0AB00D87507 /* TrackerCategory.swift in Sources */,
 				EB46EFF62BC68848009F9B2A /* ChooseTypeTrackerViewController.swift in Sources */,
 				EB70A0702B9EF286009EFEFC /* TrackerViewController.swift in Sources */,
+				EB150CE02C04933E0040F11D /* TrackersDB.xcdatamodeld in Sources */,
 				EB70A05B2B9EF181009EFEFC /* AppDelegate.swift in Sources */,
 				EBF32EF92BCD208400ED63D4 /* SuplementaryView.swift in Sources */,
 				EB38E1F82B9F60C100DF50B0 /* StatisticsViewController.swift in Sources */,
@@ -475,6 +479,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		EB150CDE2C04933E0040F11D /* TrackersDB.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				EB150CDF2C04933E0040F11D /* TrackersDB.xcdatamodel */,
+			);
+			currentVersion = EB150CDF2C04933E0040F11D /* TrackersDB.xcdatamodel */;
+			name = TrackersDB.xcdatamodeld;
+			path = /Users/olegserebranskij/learning_ios/repositories/TrackerIOS/TrackerIOS/TrackersDB.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = EB70A04F2B9EF181009EFEFC /* Project object */;
 }
