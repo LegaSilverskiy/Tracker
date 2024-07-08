@@ -5,7 +5,6 @@
 //  Created by Олег Серебрянский on 4/15/24.
 //
 
-import Foundation
 import UIKit
 
 final class SuplementaryView: UICollectionReusableView {
@@ -17,8 +16,8 @@ final class SuplementaryView: UICollectionReusableView {
         
         label.font = .systemFont(ofSize: 19, weight: .bold)
         label.textAlignment = .left
-        label.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(label)
+        
+        addSubViews([label])
         
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: topAnchor, constant: 24),

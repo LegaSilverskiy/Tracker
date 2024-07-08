@@ -9,6 +9,8 @@ import UIKit
 
 final class ChooseTypeTrackerViewController: UIViewController {
     
+    weak var closeScreenDelegate: CloseScreenDelegate?
+    
     //MARK: Private UI properties
     private lazy var createHabitButton: UIButton = {
         let button = UIButton()
@@ -69,11 +71,18 @@ final class ChooseTypeTrackerViewController: UIViewController {
         let createNewHabbit = CreateHabitViewController()
         let navigation = UINavigationController(rootViewController: createNewHabbit)
         present(navigation, animated: true)
+        
+        createNewHabbit.informAnotherVCofCreatingTracker = {
+            self.closeScreenDelegate?.closeFewVCAfterCreatingTracker()
+        }
     }
     
     @objc private func createEventButtonTappet(_ sender: UIButton){
         let createUnregularEvent = UnregularEventViewController()
         let navigation = UINavigationController(rootViewController: createUnregularEvent)
         present(navigation, animated: true)
+        createUnregularEvent.informAnotherVCofCreatingTracker = {
+            self.closeScreenDelegate?.closeFewVCAfterCreatingTracker()
+        }
     }
 }

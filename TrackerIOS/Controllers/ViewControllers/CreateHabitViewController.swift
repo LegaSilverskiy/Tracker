@@ -107,6 +107,7 @@ final class CreateHabitViewController: UIViewController {
         button.layer.borderColor = UIColor(named: "IosRed")?.cgColor
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 15
+        button.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -123,6 +124,7 @@ final class CreateHabitViewController: UIViewController {
     }()
     
     //MARK: Private properties
+    private let coreDataManager = TrackerCoreManager.shared
     private let categoriesOrSchedule = ["Категория", "Расписание"]
     private var contentSize: CGSize {
         CGSize(width: view.frame.width, height: view.frame.height)
@@ -135,10 +137,9 @@ final class CreateHabitViewController: UIViewController {
     private let emojiArr = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪"]
     private let colorArr = [UIColor(named:"ColorSelection1"), UIColor(named:"ColorSelection2"), UIColor(named:"ColorSelection3"), UIColor(named:"ColorSelection4"), UIColor(named:"ColorSelection5"), UIColor(named:"ColorSelection6"), UIColor(named:"ColorSelection7"), UIColor(named:"ColorSelection8"), UIColor(named:"ColorSelection9"), UIColor(named:"ColorSelection10"), UIColor(named:"ColorSelection11"), UIColor(named:"ColorSelection12"), UIColor(named:"ColorSelection13"), UIColor(named:"ColorSelection14"), UIColor(named:"ColorSelection15"), UIColor(named:"ColorSelection16"), UIColor(named:"ColorSelection17"), UIColor(named:"ColorSelection18")]
     
-    private let arrColorsForString = ["ColorSelection1", "ColorSelection2", "ColorSelection3", "ColorSelection4", "ColorSelection5", "ColorSelection6", "ColorSelection7", "ColorSelection8", "СolorSelection9", "ColorSelection10", "ColorSelection11", "ColorSelection12", "ColorSelection13", "ColorSelection14", "ColorSelection15", "ColorSelection16", "ColorSelection17", "ColorSelection18"]
+    private let arrColorsForString = ["#FD4C49", "#FF881E", "#007BFA", "#6E44FE", "#33CF69", "#E66DD4", "#F9D4D4", "#34A7FE", "#46E69D", "#35347C", "#FF674D", "#FF99CC", "#F6C48B", "#7994F5", "#832CF1", "#AD56DA", "#8D72E6", "#2FD058"]
     
-    var newTaskToPassToMainScreen: ( (TrackerCategory) -> Void )?
-    let singleton = CategoryDB.shared
+    var informAnotherVCofCreatingTracker: ( () -> Void )?
     
     //MARK: Override methods
     override func viewDidLoad() {
@@ -148,6 +149,7 @@ final class CreateHabitViewController: UIViewController {
     }
     
     //MARK: Private methods
+    
     private func setupUI() {
         self.title = "Новая привычка"
         view.backgroundColor = .systemBackground
@@ -235,15 +237,16 @@ final class CreateHabitViewController: UIViewController {
               let selectedColor = selectedColor,
               let selectedEmoji = selectedEmoji,
               let selectedSchedule = selectedSchedule else { print("Что-то пошло не так"); return }
-        guard let color = UIColor(named: selectedColor) else {print("Цвета не существует"); return}
-                
-                let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, colorName: color, emoji: selectedEmoji, schedule: selectedSchedule)])
-                newTaskToPassToMainScreen?(newTask)
-                singleton.addToDataBase(dataBase: newTask)
-                let mainVC = TabBarController()
-                mainVC.modalPresentationStyle = .fullScreen
-                present(mainVC, animated: true)
-                
+        let color = UIColor(hex: selectedColor)
+        
+        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: selectedSchedule)])
+        coreDataManager.createNewTracker(newTracker: newTask)
+        informAnotherVCofCreatingTracker?()
+        
+    }
+    
+    @objc private func cancelButtonTapped(_ sender: UIButton) {
+        dismiss(animated: true)
     }
     
     @objc private func clearTextButtonTapped(_ sender: UIButton) {

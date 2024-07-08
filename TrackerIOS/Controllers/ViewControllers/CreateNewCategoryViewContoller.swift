@@ -12,7 +12,6 @@ final class CreateNewCategoryViewContoller: UIViewController {
     //MARK: Private properties
     
     var updateTableClosure: ( (String) -> Void )?
-    var categories = TrackerViewController().categories
     
     //MARK: UI private properties
     private lazy var textFieldForCategories: UITextField = {
