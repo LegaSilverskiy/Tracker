@@ -9,6 +9,9 @@ import UIKit
 
 final class CategoriesViewController: UIViewController {
     
+    //MARK: Public properties
+    var updateCategory: ( (String) -> Void)?
+    var categories: [String] = []
     
     //MARK: Private UI properties
     
@@ -54,8 +57,6 @@ final class CategoriesViewController: UIViewController {
     
     //MARK: Private properties
     private let coreDataManager = TrackerCoreManager.shared
-    var updateCategory: ( (String) -> Void)?
-    var categories: [String] = []
     //MARK: Override methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -110,13 +111,8 @@ final class CategoriesViewController: UIViewController {
             return stack
         } ()
         
-        if categories.isEmpty {
-            emptyImage.isHidden = false
-            helpLabelInfo.isHidden = false
-        } else {
-            emptyImage.isHidden = true
-            helpLabelInfo.isHidden = true
-        }
+        emptyImage.isHidden = !categories.isEmpty
+        helpLabelInfo.isHidden = !categories.isEmpty
         
         view.addSubViews([emptyScreenStack])
         

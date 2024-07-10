@@ -328,9 +328,7 @@ extension TrackerCoreManager {
             print(error.localizedDescription)
         }
     }
-    
-    
-    
+
     func isTrackerExistInTrackerRecord(trackerToCheck: TrackerRecord) -> Bool {
         let request = TrackerRecordCoreData.fetchRequest()
         let predicate1 = NSPredicate(format: "%K == %@",

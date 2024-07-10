@@ -15,7 +15,6 @@
 		EB0BC6D72BD11DEF0096D5F5 /* ScheduleViewConroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0BC6D62BD11DEF0096D5F5 /* ScheduleViewConroller.swift */; };
 		EB0BC6D92BD1247F0096D5F5 /* CreateNewCategoryViewContoller.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0BC6D82BD1247F0096D5F5 /* CreateNewCategoryViewContoller.swift */; };
 		EB150CE02C04933E0040F11D /* TrackerCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EB150CDE2C04933E0040F11D /* TrackerCoreData.xcdatamodeld */; };
-		EB1767A42BDA3B1C009DCDBE /* CategoryDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1767A32BDA3B1C009DCDBE /* CategoryDB.swift */; };
 		EB38E1F52B9F482900DF50B0 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB38E1F42B9F482900DF50B0 /* TabBarController.swift */; };
 		EB38E1F82B9F60C100DF50B0 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB38E1F72B9F60C100DF50B0 /* StatisticsViewController.swift */; };
 		EB46EFF62BC68848009F9B2A /* ChooseTypeTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB46EFF52BC68848009F9B2A /* ChooseTypeTrackerViewController.swift */; };
@@ -48,7 +47,6 @@
 		EB0BC6D62BD11DEF0096D5F5 /* ScheduleViewConroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewConroller.swift; sourceTree = "<group>"; };
 		EB0BC6D82BD1247F0096D5F5 /* CreateNewCategoryViewContoller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewCategoryViewContoller.swift; sourceTree = "<group>"; };
 		EB150CDF2C04933E0040F11D /* TrackersDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TrackersDB.xcdatamodel; sourceTree = "<group>"; };
-		EB1767A32BDA3B1C009DCDBE /* CategoryDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDB.swift; sourceTree = "<group>"; };
 		EB38E1F42B9F482900DF50B0 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		EB38E1F72B9F60C100DF50B0 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
 		EB46EFF52BC68848009F9B2A /* ChooseTypeTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseTypeTrackerViewController.swift; sourceTree = "<group>"; };
@@ -115,7 +113,6 @@
 		EB1767A52BDA3D5C009DCDBE /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				EB1767A32BDA3B1C009DCDBE /* CategoryDB.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -301,7 +298,6 @@
 				EB38E1F82B9F60C100DF50B0 /* StatisticsViewController.swift in Sources */,
 				EB0A61D32BB6A0BA00D87507 /* TrackerRecord.swift in Sources */,
 				EB0A61CF2BB6A0A100D87507 /* Tracker.swift in Sources */,
-				EB1767A42BDA3B1C009DCDBE /* CategoryDB.swift in Sources */,
 				EBCA70702C32A4E90006979D /* TrackerCoreManager.swift in Sources */,
 				EB46EFF82BC6CEED009F9B2A /* UnregularEventViewController.swift in Sources */,
 				EBCA70792C32F0B20006979D /* CloseScreenDelegate.swift in Sources */,

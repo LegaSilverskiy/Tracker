@@ -145,7 +145,7 @@ final class TrackerViewController: UIViewController {
     }
     
     //MARK: Private Methods
-    
+    //TODO: Реализовать через enum, чтобы не жанглировать строками
     private func dayNumberToDayString(weekDayNumber: Int?) -> String {
         let weekDay: [Int:String] = [1: "Вс", 2: "Пн", 3: "Вт", 4: "Ср",
                                      5: "Чт", 6: "Пт", 7: "Сб"]
@@ -153,7 +153,7 @@ final class TrackerViewController: UIViewController {
               let result = weekDay[weekDayNumber] else { return ""}
         return result
     }
-    
+    //TODO: Реализовать removeObserver, чтобы избежать утечек памяти
     private func setupNotification() {
         NotificationCenter.default.addObserver(self, selector: #selector(updateDataWithNewCategoryNames), name: Notification.Name("renameCategory"), object: nil)
     }
@@ -283,6 +283,7 @@ final class TrackerViewController: UIViewController {
         coreDataManager.removeTrackerRecord(trackerToRemove: trackForAdd)
     }
     
+    //TODO: Реализвать через публичную функцию
     private func showDoneOrUndoneTask(tracker: TrackerCoreData, cell: TrackerCollectionViewCell) {
         let dateOnDatePicker = datePicker.date
         let dateOnDatePickerString = dateToString(date: dateOnDatePicker)
@@ -406,7 +407,7 @@ extension TrackerViewController: DataProviderDelegate {
         showOrHidePlaceholder()
     }
 }
-
+//MARK: Переделать череp enum
 extension TrackerViewController: FilterCategoryDelegate {
     func getFilterFromPreviousVC(filter: String) {
         switch filter {
