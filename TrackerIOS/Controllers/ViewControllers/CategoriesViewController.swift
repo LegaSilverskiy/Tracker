@@ -9,10 +9,8 @@ import UIKit
 
 final class CategoriesViewController: UIViewController {
     
-    //MARK: Private properties
-    
+    //MARK: Public properties
     var updateCategory: ( (String) -> Void)?
-    
     var categories: [String] = []
     
     //MARK: Private UI properties
@@ -57,11 +55,13 @@ final class CategoriesViewController: UIViewController {
         return tableView
     }()
     
+    //MARK: Private properties
+    private let coreDataManager = TrackerCoreManager.shared
     //MARK: Override methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        recieveCategoryNamesFromSingleton()
+        getDataFromCoreData()
     }
     
     //MARK: Private methods
@@ -98,13 +98,31 @@ final class CategoriesViewController: UIViewController {
         ])
     }
     
-    func recieveCategoryNamesFromSingleton() {
-        self.categories = CategoryDB.shared.getCategoryNames()
+    private func showPlaceholderForEmptyScreen() {
+        
+        let emptyScreenStack: UIStackView = {
+            let stack = UIStackView()
+            stack.axis = .vertical
+            stack.spacing = 8
+            stack.alignment = .center
+            
+            stack.addArrangedSubview(emptyImage)
+            stack.addArrangedSubview(helpLabelInfo)
+            return stack
+        } ()
+        
+        emptyImage.isHidden = !categories.isEmpty
+        helpLabelInfo.isHidden = !categories.isEmpty
+        
+        view.addSubViews([emptyScreenStack])
+        
+        NSLayoutConstraint.activate([
+            emptyScreenStack.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            helpLabelInfo.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            helpLabelInfo.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+        ])
     }
     
-    func sendCategoryNamesToSingleton() {
-        CategoryDB.shared.updateCategoryNames(categoryNames: categories)
-    }
     
     //MARK: Actions
     @objc private func createCategoryButtonTappet() {
@@ -112,9 +130,15 @@ final class CategoriesViewController: UIViewController {
         let creatingCategoryNavVC = UINavigationController(rootViewController: creatingNewCategoryVC)
         creatingNewCategoryVC.updateTableClosure = { [weak self] newCategory in
             guard let self = self else { return }
-            self.categories.append(newCategory)
-            self.tableForCategories.reloadData()
-            self.tableForCategories.layoutIfNeeded()
+            coreDataManager.createNewCategory(newCategoryName: newCategory)
+            getDataFromCoreData()
+            
+            if categories.isEmpty {
+                showPlaceholderForEmptyScreen()
+            } else {
+                emptyImage.isHidden = true
+                helpLabelInfo.isHidden = true
+            }
         }
         present(creatingCategoryNavVC, animated: true)
     }
@@ -168,4 +192,9 @@ extension CategoriesViewController: UITableViewDelegate {
     }
 }
 
-
+extension CategoriesViewController {
+    func getDataFromCoreData() {
+        self.categories = coreDataManager.getCategoryNamesFromStorage()
+        self.tableForCategories.reloadSections(IndexSet(integer: 0), with: .automatic)
+    }
+}
