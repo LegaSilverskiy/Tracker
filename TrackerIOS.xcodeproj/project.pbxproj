@@ -17,6 +17,8 @@
 		EB150CE02C04933E0040F11D /* TrackerCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EB150CDE2C04933E0040F11D /* TrackerCoreData.xcdatamodeld */; };
 		EB38E1F52B9F482900DF50B0 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB38E1F42B9F482900DF50B0 /* TabBarController.swift */; };
 		EB38E1F82B9F60C100DF50B0 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB38E1F72B9F60C100DF50B0 /* StatisticsViewController.swift */; };
+		EB43310F2C455DD400DC0551 /* OnboardingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB43310E2C455DD400DC0551 /* OnboardingVC.swift */; };
+		EB4331112C455DE000DC0551 /* OnboardingCustomVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB4331102C455DE000DC0551 /* OnboardingCustomVC.swift */; };
 		EB46EFF62BC68848009F9B2A /* ChooseTypeTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB46EFF52BC68848009F9B2A /* ChooseTypeTrackerViewController.swift */; };
 		EB46EFF82BC6CEED009F9B2A /* UnregularEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB46EFF72BC6CEED009F9B2A /* UnregularEventViewController.swift */; };
 		EB46EFFA2BC6CF54009F9B2A /* CreateHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB46EFF92BC6CF54009F9B2A /* CreateHabitViewController.swift */; };
@@ -49,6 +51,8 @@
 		EB150CDF2C04933E0040F11D /* TrackersDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TrackersDB.xcdatamodel; sourceTree = "<group>"; };
 		EB38E1F42B9F482900DF50B0 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		EB38E1F72B9F60C100DF50B0 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
+		EB43310E2C455DD400DC0551 /* OnboardingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingVC.swift; sourceTree = "<group>"; };
+		EB4331102C455DE000DC0551 /* OnboardingCustomVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCustomVC.swift; sourceTree = "<group>"; };
 		EB46EFF52BC68848009F9B2A /* ChooseTypeTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseTypeTrackerViewController.swift; sourceTree = "<group>"; };
 		EB46EFF72BC6CEED009F9B2A /* UnregularEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnregularEventViewController.swift; sourceTree = "<group>"; };
 		EB46EFF92BC6CF54009F9B2A /* CreateHabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateHabitViewController.swift; sourceTree = "<group>"; };
@@ -83,13 +87,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		EB0A61CD2BB6A08000D87507 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		EB0A61D42BB6A29F00D87507 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -133,6 +130,15 @@
 			path = Statistic;
 			sourceTree = "<group>";
 		};
+		EB43310D2C455DB800DC0551 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				EB43310E2C455DD400DC0551 /* OnboardingVC.swift */,
+				EB4331102C455DE000DC0551 /* OnboardingCustomVC.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		EB6BC3182C32A2D20051D719 /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
@@ -169,11 +175,11 @@
 		EB70A0592B9EF181009EFEFC /* TrackerIOS */ = {
 			isa = PBXGroup;
 			children = (
+				EB43310D2C455DB800DC0551 /* Onboarding */,
 				EBF87A0C2BC965F100E97335 /* ViewCells */,
 				EB0A61D42BB6A29F00D87507 /* Controllers */,
 				EB0A61D52BB6B77B00D87507 /* Extensions */,
 				EBCA70732C32D2630006979D /* Protocols */,
-				EB0A61CD2BB6A08000D87507 /* Models */,
 				EB70A05C2B9EF181009EFEFC /* SceneDelegate.swift */,
 				EB70A05A2B9EF181009EFEFC /* AppDelegate.swift */,
 				EB70A0632B9EF184009EFEFC /* Assets.xcassets */,
@@ -300,6 +306,8 @@
 				EB0A61CF2BB6A0A100D87507 /* Tracker.swift in Sources */,
 				EBCA70702C32A4E90006979D /* TrackerCoreManager.swift in Sources */,
 				EB46EFF82BC6CEED009F9B2A /* UnregularEventViewController.swift in Sources */,
+				EB43310F2C455DD400DC0551 /* OnboardingVC.swift in Sources */,
+				EB4331112C455DE000DC0551 /* OnboardingCustomVC.swift in Sources */,
 				EBCA70792C32F0B20006979D /* CloseScreenDelegate.swift in Sources */,
 				EB0BC6D72BD11DEF0096D5F5 /* ScheduleViewConroller.swift in Sources */,
 				EB38E1F52B9F482900DF50B0 /* TabBarController.swift in Sources */,
