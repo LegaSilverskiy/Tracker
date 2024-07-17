@@ -10,8 +10,16 @@ import UIKit
 final class CreateNewCategoryViewContoller: UIViewController {
     
     //MARK: Private properties
+    var viewModel: ViewModelProtocol
     
-    var updateTableClosure: ( (String) -> Void )?
+    init(viewModel: ViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     //MARK: UI private properties
     private lazy var textFieldForCategories: UITextField = {
@@ -70,7 +78,7 @@ final class CreateNewCategoryViewContoller: UIViewController {
     //MARK: Actions
     @objc private func createCategoryButtonTappet() {
         guard let newCategoryName = textFieldForCategories.text else { return }
-        updateTableClosure?(newCategoryName)
+        viewModel.updateCategory?(newCategoryName)
         dismiss(animated: true)
         
     }

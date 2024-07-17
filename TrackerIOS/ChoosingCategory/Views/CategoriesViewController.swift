@@ -10,9 +10,17 @@ import UIKit
 final class CategoriesViewController: UIViewController {
     
     //MARK: Public properties
-    var updateCategory: ( (String) -> Void)?
-    var categories: [String] = []
+    var viewModel: ViewModelProtocol
     
+    init(viewModel: ViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     //MARK: Private UI properties
     
     private lazy var tableForCategories: UITableView = {
@@ -49,19 +57,13 @@ final class CategoriesViewController: UIViewController {
         button.addTarget(self, action: #selector(createCategoryButtonTappet), for: .touchUpInside)
         return button
     }()
-    
-    private lazy var listOfCategories: UITableView = {
-        let tableView = UITableView()
-        return tableView
-    }()
-    
-    //MARK: Private properties
-    private let coreDataManager = TrackerCoreManager.shared
     //MARK: Override methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        getDataFromViewModel()
+        
+        setupBinding()
         setupUI()
-        getDataFromCoreData()
     }
     
     //MARK: Private methods
@@ -98,6 +100,17 @@ final class CategoriesViewController: UIViewController {
         ])
     }
     
+    private func setupBinding() {
+        viewModel.dataUpdated = { [weak self] in
+            guard let self else { return }
+            self.tableForCategories.reloadSections(IndexSet(integer: 0), with: .automatic)
+        }
+    }
+    
+    private func getDataFromViewModel() {
+        viewModel.getDataFromCoreData()
+    }
+    
     private func showPlaceholderForEmptyScreen() {
         
         let emptyScreenStack: UIStackView = {
@@ -111,8 +124,8 @@ final class CategoriesViewController: UIViewController {
             return stack
         } ()
         
-        emptyImage.isHidden = !categories.isEmpty
-        helpLabelInfo.isHidden = !categories.isEmpty
+        emptyImage.isHidden = !viewModel.categories.isEmpty
+        helpLabelInfo.isHidden = !viewModel.categories.isEmpty
         
         view.addSubViews([emptyScreenStack])
         
@@ -126,14 +139,16 @@ final class CategoriesViewController: UIViewController {
     
     //MARK: Actions
     @objc private func createCategoryButtonTappet() {
-        let creatingNewCategoryVC = CreateNewCategoryViewContoller()
+        let viewModel = CategoriesViewModel()
+        let creatingNewCategoryVC = CreateNewCategoryViewContoller(viewModel: viewModel)
         let creatingCategoryNavVC = UINavigationController(rootViewController: creatingNewCategoryVC)
-        creatingNewCategoryVC.updateTableClosure = { [weak self] newCategory in
+        
+        creatingNewCategoryVC.viewModel.updateCategory = { [weak self] newCategory in
             guard let self = self else { return }
-            coreDataManager.createNewCategory(newCategoryName: newCategory)
-            getDataFromCoreData()
+            viewModel.coreDataManager.createNewCategory(newCategoryName: newCategory)
+
             
-            if categories.isEmpty {
+            if viewModel.categories.isEmpty {
                 showPlaceholderForEmptyScreen()
             } else {
                 emptyImage.isHidden = true
@@ -141,60 +156,5 @@ final class CategoriesViewController: UIViewController {
             }
         }
         present(creatingCategoryNavVC, animated: true)
-    }
-}
-
-extension CategoriesViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        categories.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cellCategories", for: indexPath)
-        cell.backgroundColor = .backgroundDayIOS
-        cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        cell.textLabel?.text = categories[indexPath.row]
-        
-        if indexPath.row == categories.count - 1 {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-            cell.layer.cornerRadius = 16
-            cell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
-        }
-        
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        75
-    }
-    
-}
-
-extension CategoriesViewController: UITableViewDelegate {
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath)
-        cell?.selectionStyle = .none
-        let selectionImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 14, height: 14))
-        selectionImage.image = UIImage(systemName: "checkmark")
-        cell?.accessoryView = selectionImage
-        
-        guard let categoryName = cell?.textLabel?.text else { return }
-        updateCategory?(categoryName)
-        dismiss(animated: true)
-        
-    }
-    
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath)
-        cell?.accessoryView = UIView()
-    }
-}
-
-extension CategoriesViewController {
-    func getDataFromCoreData() {
-        self.categories = coreDataManager.getCategoryNamesFromStorage()
-        self.tableForCategories.reloadSections(IndexSet(integer: 0), with: .automatic)
     }
 }
