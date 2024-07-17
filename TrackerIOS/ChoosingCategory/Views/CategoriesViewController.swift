@@ -17,7 +17,6 @@ final class CategoriesViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -60,11 +59,15 @@ final class CategoriesViewController: UIViewController {
     //MARK: Override methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        getDataFromViewModel()
-        
         setupBinding()
+        getDataFromViewModel()
         setupUI()
     }
+    
+    //    override func viewWillAppear(_ animated: Bool) {
+    //        super.viewWillAppear(animated)
+    //
+    //    }
     
     //MARK: Private methods
     
@@ -75,7 +78,7 @@ final class CategoriesViewController: UIViewController {
         view.addSubview(helpLabelInfo)
         view.addSubview(createCategoryButton)
         view.addSubview(tableForCategories)
-
+        
         emptyImage.translatesAutoresizingMaskIntoConstraints = false
         helpLabelInfo.translatesAutoresizingMaskIntoConstraints = false
         createCategoryButton.translatesAutoresizingMaskIntoConstraints = false
@@ -103,7 +106,10 @@ final class CategoriesViewController: UIViewController {
     private func setupBinding() {
         viewModel.dataUpdated = { [weak self] in
             guard let self else { return }
-            self.tableForCategories.reloadSections(IndexSet(integer: 0), with: .automatic)
+            DispatchQueue.main.async {
+                //            self.tableForCategories.reloadSections(IndexSet(integer: 0), with: .automatic)
+                self.tableForCategories.reloadData()
+            }
         }
     }
     
@@ -141,12 +147,10 @@ final class CategoriesViewController: UIViewController {
     @objc private func createCategoryButtonTappet() {
         let viewModel = CategoriesViewModel()
         let creatingNewCategoryVC = CreateNewCategoryViewContoller(viewModel: viewModel)
-        let creatingCategoryNavVC = UINavigationController(rootViewController: creatingNewCategoryVC)
-        
+        //        let creatingCategoryNavVC = UINavigationController(rootViewController: creatingNewCategoryVC)
         creatingNewCategoryVC.viewModel.updateCategory = { [weak self] newCategory in
             guard let self = self else { return }
             viewModel.coreDataManager.createNewCategory(newCategoryName: newCategory)
-
             
             if viewModel.categories.isEmpty {
                 showPlaceholderForEmptyScreen()
@@ -155,6 +159,9 @@ final class CategoriesViewController: UIViewController {
                 helpLabelInfo.isHidden = true
             }
         }
-        present(creatingCategoryNavVC, animated: true)
+        creatingNewCategoryVC.dissmissCallBack = { [weak self] in
+            self?.getDataFromViewModel()
+        }
+        present(creatingNewCategoryVC, animated: true)
     }
 }

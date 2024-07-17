@@ -11,6 +11,7 @@ final class CreateNewCategoryViewContoller: UIViewController {
     
     //MARK: Private properties
     var viewModel: ViewModelProtocol
+    var dissmissCallBack: (() -> Void)?
     
     init(viewModel: ViewModelProtocol) {
         self.viewModel = viewModel
@@ -79,7 +80,9 @@ final class CreateNewCategoryViewContoller: UIViewController {
     @objc private func createCategoryButtonTappet() {
         guard let newCategoryName = textFieldForCategories.text else { return }
         viewModel.updateCategory?(newCategoryName)
-        dismiss(animated: true)
+        dismiss(animated: true) {
+            self.dissmissCallBack?()
+        }
         
     }
     

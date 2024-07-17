@@ -9,6 +9,7 @@ import UIKit
 
 extension CategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        //TODO: viewModel.getCategoriesCount - метод который будет возвращать приватные свойства все свойства во viewModel должны быть приватны.
         viewModel.categories.count
     }
     
