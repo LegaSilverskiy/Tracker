@@ -10,10 +10,10 @@ import UIKit
 final class CreateNewCategoryViewContoller: UIViewController {
     
     //MARK: Private properties
-    var viewModel: ViewModelProtocol
+    var viewModel: CategoriesViewModelProtocol
     var dissmissCallBack: (() -> Void)?
     
-    init(viewModel: ViewModelProtocol) {
+    init(viewModel: CategoriesViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }

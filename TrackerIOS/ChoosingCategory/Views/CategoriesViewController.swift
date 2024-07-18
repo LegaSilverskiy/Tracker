@@ -10,9 +10,9 @@ import UIKit
 final class CategoriesViewController: UIViewController {
     
     //MARK: Public properties
-    var viewModel: ViewModelProtocol
+    var viewModel: CategoriesViewModelProtocol
     
-    init(viewModel: ViewModelProtocol) {
+    init(viewModel: CategoriesViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -64,11 +64,6 @@ final class CategoriesViewController: UIViewController {
         setupUI()
     }
     
-    //    override func viewWillAppear(_ animated: Bool) {
-    //        super.viewWillAppear(animated)
-    //
-    //    }
-    
     //MARK: Private methods
     
     private func setupUI() {
@@ -107,12 +102,11 @@ final class CategoriesViewController: UIViewController {
         viewModel.dataUpdated = { [weak self] in
             guard let self else { return }
             DispatchQueue.main.async {
-                //            self.tableForCategories.reloadSections(IndexSet(integer: 0), with: .automatic)
                 self.tableForCategories.reloadData()
             }
         }
     }
-    
+    //TODO: Нужно убрать этот метод и придумать как использовать только viewModel.getDataFromCoreData()
     private func getDataFromViewModel() {
         viewModel.getDataFromCoreData()
     }
@@ -144,10 +138,10 @@ final class CategoriesViewController: UIViewController {
     
     
     //MARK: Actions
+    //TODO: Настроить вью модель и перенести колбэк в вью модел
     @objc private func createCategoryButtonTappet() {
         let viewModel = CategoriesViewModel()
         let creatingNewCategoryVC = CreateNewCategoryViewContoller(viewModel: viewModel)
-        //        let creatingCategoryNavVC = UINavigationController(rootViewController: creatingNewCategoryVC)
         creatingNewCategoryVC.viewModel.updateCategory = { [weak self] newCategory in
             guard let self = self else { return }
             viewModel.coreDataManager.createNewCategory(newCategoryName: newCategory)

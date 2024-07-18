@@ -8,7 +8,7 @@
 import Foundation
 
 //TODO: Заменить протокол на что-то другое
-protocol ViewModelProtocol {
+protocol CategoriesViewModelProtocol {
     var updateCategory: ( (String) -> Void)? { get set }
     var dataUpdated: ( () -> Void )? { get set }
     var categories: [String] { get set }

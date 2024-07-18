@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class CategoriesViewModel: ViewModelProtocol {
+final class CategoriesViewModel: CategoriesViewModelProtocol {
     
     let coreDataManager = TrackerCoreManager.shared
     

@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class OnboardingCustomVC: UIViewController {
+final class OnboardingPageViewController: UIViewController {
     
     private let image = UIImageView()
     private let label = UILabel()
