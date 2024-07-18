@@ -278,9 +278,10 @@ extension UnregularEventViewController: UITableViewDataSource {
 
 extension UnregularEventViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            let navigationCategories = CategoriesViewController()
+        let viewModel = CategoriesViewModel()
+            let navigationCategories = CategoriesViewController(viewModel: viewModel)
             let navigation = UINavigationController(rootViewController: navigationCategories)
-            navigationCategories.updateCategory = { [weak self] categoryName in
+            viewModel.updateCategory = { [weak self] categoryName in
                 guard let self = self,
                       let cell = tableView.cellForRow(at: indexPath) else { return }
                 cell.detailTextLabel?.text = categoryName
