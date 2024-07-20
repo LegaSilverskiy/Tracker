@@ -306,6 +306,116 @@ extension TrackerCoreManager {
         print("New TrackerRecord created ✅")
     }
     
+    func countOfTrackerInRecords(trackerIDToCount: String) -> Int {
+        let request = TrackerRecordCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerRecordCoreData.id),
+                                    trackerIDToCount)
+        request.predicate = predicate
+
+        do {
+            return try context.count(for: request)
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+            return 0
+        }
+    }
+    
+    func deleteAllRecords() {
+        let request: NSFetchRequest<NSFetchRequestResult> = TrackerRecordCoreData.fetchRequest()
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+
+        do {
+            try context.execute(deleteRequest)
+            print("All TrackerRecords deleted successfully ✅")
+            save()
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+        }
+    }
+
+    func printAllTrackerRecords() {
+        let request = TrackerRecordCoreData.fetchRequest()
+
+        do {
+            let result = try context.fetch(request)
+            for element in result {
+                print("element.date \(String(describing: element.date)), element.id \(String(describing: element.id))")
+            }
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+        }
+    }
+    
+    func countOfAllCompletedTrackers() -> Int {
+        let request = TrackerRecordCoreData.fetchRequest()
+        do {
+            return try context.count(for: request)
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+            return 0
+        }
+    }
+    
+    func getAllTrackersForTheWeekDay(weekDay: String) -> [String: Int] {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K CONTAINS %@",
+                                    #keyPath(TrackerCoreData.schedule), weekDay)
+        request.predicate = predicate
+
+        var result = [String: Int]()
+
+        do {
+            let data = try context.count(for: request)
+            result[weekDay] = data
+            return result
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+            return [:]
+        }
+    }
+    
+    func getTrackerRecordsCountsForDate(date: String) -> [String: Int] {
+        let request = TrackerRecordCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K CONTAINS %@",
+                                    #keyPath(TrackerRecordCoreData.date), date)
+        request.predicate = predicate
+
+        var trackerRecordsForDate: [String: Int] = [:]
+
+        do {
+            let data = try context.fetch(request)
+
+            for tracker in data {
+                trackerRecordsForDate[tracker.date!] = (trackerRecordsForDate[tracker.date!] ?? 0) + 1
+            }
+            let sortedArray = trackerRecordsForDate.sorted(by: {$0.key < $1.key})
+            return Dictionary(uniqueKeysWithValues: sortedArray)
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+            return [:]
+        }
+    }
+    
+    func getAllTrackerRecordsDaysAndCounts() -> [String: Int] {
+        let request = TrackerRecordCoreData.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        var countsByDate: [String: Int] = [:]
+
+        do {
+            let data = try context.fetch(request)
+
+            for tracker in data {
+                countsByDate[tracker.date!] = (countsByDate[tracker.date!] ?? 0) + 1
+            }
+            let sortedArray = countsByDate.sorted(by: {$0.key < $1.key})
+            return Dictionary(uniqueKeysWithValues: sortedArray)
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+            return [:]
+        }
+    }
+    
     func removeTrackerRecord(trackerToRemove: TrackerRecord) {
         let request = TrackerRecordCoreData.fetchRequest()
         let predicate1 = NSPredicate(format: "%K == %@",

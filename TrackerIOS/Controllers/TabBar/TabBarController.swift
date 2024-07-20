@@ -19,8 +19,9 @@ final class TabBarController: UITabBarController {
     //MARK: Tab setup
     
     private func setupTabs() {
+        let viewModel = StatisticViewModel()
         let trackers = self.createNav(with: "Трекеры", vc: TrackerViewController())
-        let stats = self.createNav(with: "Статистика", vc: StatisticsViewController())
+        let stats = self.createNav(with: "Статистика", vc: StatisticViewController(viewModel: viewModel))
         trackers.tabBarItem = UITabBarItem(title: "Трекер", image: UIImage(systemName: "record.circle.fill"), tag: 0)
         stats.tabBarItem = UITabBarItem(title: "Статистика", image: UIImage(systemName: "hare.fill"), tag: 1)
         self.setViewControllers([trackers, stats], animated: true)
