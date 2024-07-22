@@ -12,7 +12,6 @@ final class TrackerViewController: UIViewController {
     
     //MARK: Private properties
     
-   
     private let searchField = UISearchController(searchResultsController: nil)
     private var trackers: [String] {
         newData.map { $0.header }
@@ -53,7 +52,8 @@ final class TrackerViewController: UIViewController {
     
     private lazy var labelWithTextForEmpty: UILabel = {
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
+        let localizedTextForEmptyScreen = NSLocalizedString("What are we going to track?", comment: "Text for empty screen")
+        label.text = localizedTextForEmptyScreen
         label.textColor = .blackDayIOS
         label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         return label
@@ -71,7 +71,7 @@ final class TrackerViewController: UIViewController {
     //MARK: View Life Cycles
     
     override func viewDidLoad() {
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         coreDataManager.setupFetchedResultsController(weekDay: weekDay)
         categories = coreDataManager.fetchData()
         coreDataManager.delegate = self
@@ -159,10 +159,11 @@ final class TrackerViewController: UIViewController {
     }
     
     private func setupSearchController() {
+        let localizedTextForSearch = NSLocalizedString("Search", comment: "Text for placeholder in search bar")
         searchField.searchResultsUpdater = self
         searchField.obscuresBackgroundDuringPresentation = false
         searchField.hidesNavigationBarDuringPresentation = false
-        searchField.searchBar.placeholder = "Поиск"
+        searchField.searchBar.placeholder = localizedTextForSearch
         
         navigationItem.searchController = searchField
         definesPresentationContext = false
@@ -195,7 +196,7 @@ final class TrackerViewController: UIViewController {
                                                                 style: .plain,
                                                                 target: self,
                                                                 action: #selector(addNewTracker))
-        self.navigationItem.leftBarButtonItem?.tintColor = .black
+        self.navigationItem.leftBarButtonItem?.tintColor = UIColor(named: "ColorForPlusButton")
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
     private func showOrHidePlaceholder() {
@@ -207,12 +208,15 @@ final class TrackerViewController: UIViewController {
         textLabel.isHidden = true
     }
     private func showPlaceholderForEmptyScreen() {
+        let localizedTextForEmptyScreen = NSLocalizedString("What are we going to track?", comment: "Text for empty screen")
+        let localizedTextForEmptyScreenIftrackersNotFound = NSLocalizedString("Nothing found", comment: "Text for empty screen")
+        
         if isSearchMode {
             emptyTrackerImage.image = UIImage(named: "searchPlaceholder")
-            textLabel.text = "Ничего не найдено"
+            textLabel.text = localizedTextForEmptyScreenIftrackersNotFound
         } else {
             emptyTrackerImage.image = UIImage(named: "FallingStar")
-            textLabel.text = "Что будем отслеживать?"
+            textLabel.text = localizedTextForEmptyScreen
         }
         
         emptyTrackerImage.isHidden = false

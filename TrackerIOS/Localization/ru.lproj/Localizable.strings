@@ -23,10 +23,13 @@
 "What are we going to track?" = "Что будем отслеживать?";
 "Search" = "Поиск";
 "Nothing found" = "Ничего не найдено";
-"Tracker" = "Привычка";
+"Tracker" = "Трекеры";
 "One-time event" = "Нерегулярные события";
 "Cancel" = "Отмена";
 "Create" = "Создать";
+"Pin" = "Закрепить";
+"Edit" = "Редактировать";
+"Delete" = "Удалить";
 "New tracker" = "Новая привычка";
 "Something went wrong" = "Что-то пошло не так";
 "Schedule" = "Расписание";
