@@ -89,6 +89,37 @@ final class TrackerCoreManager: NSObject {
     
     // MARK: - CRUD
     
+    func getAllTrackersForWeekday(weekDay: String) {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate1 = NSPredicate(format: "schedule CONTAINS %@", weekDay)
+        let predicate2 = NSPredicate(format: "schedule CONTAINS %@", "Каждый день")
+        let predicate3 = NSPredicate(format: "%K == %@",
+                                     #keyPath(TrackerCoreData.isPinned), NSNumber(value: false))
+        let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2])
+        let finalCompoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [compoundPredicate, predicate3])
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request.sortDescriptors = [sort]
+        request.predicate = finalCompoundPredicate
+
+        setupTrackerFetchedResultsController(request: request)
+    }
+    
+    func setupTrackerFetchedResultsController(request: NSFetchRequest<TrackerCoreData>) {
+        trackersFetchedResultsController = NSFetchedResultsController(
+            fetchRequest: request,
+            managedObjectContext: context,
+            sectionNameKeyPath: "category.header",
+            cacheName: nil)
+
+        trackersFetchedResultsController?.delegate = self
+
+        do {
+            try trackersFetchedResultsController?.performFetch()
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+        }
+    }
+    
     func printCoreData() {
         let request = TrackerCoreData.fetchRequest()
         let sort = NSSortDescriptor(key: "category.header", ascending: true)
@@ -214,12 +245,51 @@ final class TrackerCoreManager: NSObject {
     
     func getCategoryNamesFromStorage() -> [String] {
         let request = TrackerCategoryCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "NOT (%K == %@)",
+                                    #keyPath(TrackerCategoryCoreData.header), "Закрепленные")
+        request.predicate = predicate
+
         let result = try? context.fetch(request)
-        
+
         guard let result = result else { return ["Ошибка"]}
         let headers = result.map { $0.header ?? "Ooops" }
-        
+
         return headers
+    }
+    func numberOfRowsInStickySection() -> Int {
+        guard let sections = trackersFetchedResultsController?.sections else { print("Hmmm"); return 0}
+
+        for section in sections where section.name == "Закрепленные" {
+            
+            return section.numberOfObjects
+            
+        }
+        print("We can't find any elements in sticky Cat")
+        return 0
+    }
+    
+    func printAllTrackersInCoreData() {
+        let fetchRequest = TrackerCategoryCoreData.fetchRequest()
+        do {
+            let allTrackers = try context.fetch(fetchRequest)
+            let result = transformCoreDataToModel(trackerCategoryCoreData: allTrackers)
+            print("printAllTrackersInCoreData: \(result)")
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+        }
+    }
+    
+    func printAllpinnedTrackers() {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerCoreData.isPinned), NSNumber(value: true))
+        request.predicate = predicate
+        do {
+            let result = try context.fetch(request)
+            print("result \(result)")
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+        }
     }
 }
 
@@ -383,6 +453,29 @@ extension TrackerCoreManager {
                 save()
             }
             print("TrackerRecords for this tracker deleted ✅")
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+        }
+    }
+    
+    func removeTrackerRecordForThisDay(trackerToRemove: TrackerRecord) {
+        let request = TrackerRecordCoreData.fetchRequest()
+        let predicate1 = NSPredicate(format: "%K == %@",
+                                     #keyPath(TrackerRecordCoreData.id), trackerToRemove.id.uuidString )
+        let predicate2 = NSPredicate(format: "%K == %@",
+                                     #keyPath(TrackerRecordCoreData.date), trackerToRemove.date)
+        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
+        request.predicate = compoundPredicate
+
+        do {
+            let result = try context.fetch(request)
+            if let trackerToDelete = result.first {
+                context.delete(trackerToDelete)
+                print("Tracker Record deleted ✅")
+                save()
+            } else {
+                print("We can't find the tracker")
+            }
         } catch {
             print("\(error.localizedDescription) 🟥")
         }

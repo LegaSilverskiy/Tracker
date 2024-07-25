@@ -16,7 +16,7 @@ final class TrackerViewController: UIViewController {
     private var trackers: [String] {
         newData.map { $0.header }
     }
-    private lazy var currentDate = datePicker.date
+    lazy var currentDate = datePicker.date
     var dataUpdated: ( () -> Void )?
     weak var passTrackerToEditDelegate: PassTrackerToEditDelegate?
     let coreDataManager = TrackerCoreManager.shared
@@ -27,6 +27,7 @@ final class TrackerViewController: UIViewController {
     private var newData: [TrackerCategory] {
         isSearchMode ? filteredData : categories
     }
+
     
     //MARK: Private UI properties
     
@@ -80,7 +81,8 @@ final class TrackerViewController: UIViewController {
         navBarItem()
         setupStickyCollectionView()
         coreDataManager.printTrackerRecord()
-        dataBinding()
+        dataUpd()
+        coreDataManager.setupPinnedFetchedResultsController()
     }
     
     //MARK: Actions
@@ -91,28 +93,20 @@ final class TrackerViewController: UIViewController {
         createNewHabit.closeScreenDelegate = self
     }
     
-    @objc private func cellButtonTapped(_ sender: UIButton) {
-        let buttonIndexPath = sender.convert(CGPoint.zero, to: self.trackersCollectionView)
-        
-        guard let indexPath = trackersCollectionView.indexPathForItem(at: buttonIndexPath),
-              let cell = trackersCollectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell else { return }
-        
-        let category = newData[indexPath.section]
-        let tracker = category.trackers[indexPath.row]
-        let currentDateString = dateToString(date: self.currentDate)
-        guard let cellColor = cell.frameView.backgroundColor else { print("Color problem"); return }
-        
-        let trackForAdd = TrackerRecord(id: tracker.id, date: currentDateString)
+    @objc func cellButtonTapped(_ sender: UIButton) {
 
-        let check = coreDataManager.isTrackerExistInTrackerRecord(trackerToCheck: trackForAdd)
-        
-        if !check {
-            makeTaskDone(trackForAdd: trackForAdd, cellColor: cellColor, cell: cell)
-        } else {
-            makeTaskUndone(trackForAdd: trackForAdd, cellColor: cellColor, cell: cell)
-        }
+        guard let result = findTrackerAndIndexPathByTouch(sender: sender)
+        else { print("We cant find Tracker by touch"); return }
 
+        guard let trackerRecord = isTrackerExistInTrackerRecord(
+            tracker: result.Tracker, date: currentDate) else { print("Some problems here"); return }
+        print("trackerRecord \(trackerRecord)")
+
+        makeTrackerDoneOrUndone(trackerRecord: trackerRecord)
     }
+    
+    
+    
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
         let dateFormatter = DateFormatter()
@@ -174,7 +168,7 @@ final class TrackerViewController: UIViewController {
         
         trackersCollectionView.dataSource = self
         trackersCollectionView.delegate = self
-        
+        setupStickyCollectionView()
         trackersCollectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.identifier)
         
         trackersCollectionView.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
@@ -195,7 +189,7 @@ final class TrackerViewController: UIViewController {
             trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
-        setupStickyCollectionView()
+
     }
     
     private func navBarItem() {
@@ -255,11 +249,10 @@ final class TrackerViewController: UIViewController {
         return dateToString
     }
     
-    private func dataBinding() {
+    private func dataUpd() {
         dataUpdated = { [weak self] in
             guard let self else { return }
             DispatchQueue.main.async {
-                //                print(self.viewModel.categories)
                 self.trackersCollectionView.reloadData()
                 self.stickyCollectionView.reloadData()
                 self.setStickyCollectionHeight()
@@ -268,43 +261,73 @@ final class TrackerViewController: UIViewController {
         }
     }
     
-    func configureCell(cell: TrackerCollectionViewCell, indexPath: IndexPath) {
-        guard let tracker = coreDataManager.object(at: indexPath) else { return }
-        
-        let trackerColor = UIColor(hex: tracker.colorName ?? "#000000")
+    private func uploadDataFormCoreData() {
+        updateDataFromCoreData(weekDay: weekDay)
+        coreDataManager.delegate = self
+    }
+    
+    func configureStickyCollection(cell: TrackerCollectionViewCell, indexPath: IndexPath) {
+        guard let pinnedTrackers = coreDataManager.getAllPinnedTrackers() else {
+            print("1We have some problems with decoding here")
+            return
+        }
+        let pinnedTrackerCD = pinnedTrackers[indexPath.item]
+        let pinnedTracker = Tracker(coreDataObject: pinnedTrackerCD)
+
+        configureCell(tracker: pinnedTracker, cell: cell)
+    }
+    func configureTrackerCollection(cell: TrackerCollectionViewCell, indexPath: IndexPath) {
+        guard let trackerCD = coreDataManager.object(at: indexPath) else {
+            print("Hmm"); return }
+
+        let tracker = Tracker(coreDataObject: trackerCD)
+        configureCell(tracker: tracker, cell: cell)
+    }
+    
+    func configureCell(tracker: Tracker,
+                               cell: TrackerCollectionViewCell) {
+
+        let trackerColor = UIColor(hex: tracker.color)
         let frameColor = trackerColor
         let today = Date()
-        
+
         cell.titleLabel.text = tracker.name
         cell.emojiLabel.text = tracker.emoji
         cell.frameView.backgroundColor = frameColor
         cell.plusButton.backgroundColor = frameColor
         cell.plusButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
         cell.plusButton.isEnabled = currentDate > today ? false : true
-        
-        showDoneOrUndoneTask(tracker: tracker, cell: cell)
+
+        let countOfDays = MainHelper.countOfDaysForTheTrackerInString(trackerId: tracker.id.uuidString)
+        cell.daysLabel.text = countOfDays
+
+        showDoneOrUndoneTaskForDatePickerDate(tracker: tracker, cell: cell)
+
+        let interaction = UIContextMenuInteraction(delegate: self)
+        cell.frameView.addInteraction(interaction)
     }
     
-    private func makeTaskDone(trackForAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
-        coreDataManager.addTrackerRecord(trackerToAdd: trackForAdd)
-        
-        let doneImage = UIImage(named: "done")
-        cell.plusButton.setImage(doneImage, for: .normal)
-        cell.plusButton.backgroundColor = cellColor.withAlphaComponent(0.3)
-        cell.days += 1
-        cell.daysLabel.text = "\(cell.days) день"
+    func updateDataFromCoreData(weekDay: String) {
+        coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
+        categories = coreDataManager.fetchData()
     }
     
-    private func makeTaskUndone(trackForAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
-        let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-        cell.plusButton.backgroundColor = cellColor.withAlphaComponent(1)
-        cell.plusButton.setImage(plusImage, for: .normal)
-        cell.plusButton.layer.cornerRadius = cell.plusButton.frame.width / 2
-        
-        cell.days -= 1
-        cell.daysLabel.text = "\(cell.days) день"
-        
-        coreDataManager.removeTrackerRecord(trackerToRemove: trackForAdd)
+    private func makeTaskDone(trackToAdd: TrackerRecord) {
+        coreDataManager.addTrackerRecord(trackerToAdd: trackToAdd)
+        dataUpdated?()
+    }
+
+    private func makeTaskUndone(trackToRemove: TrackerRecord) {
+        coreDataManager.removeTrackerRecordForThisDay(trackerToRemove: trackToRemove)
+        dataUpdated?()
+    }
+    
+    private func makeTrackerDoneOrUndone(trackerRecord: (TrackerRecord: TrackerRecord, isExist: Bool)) {
+        if !trackerRecord.isExist {
+            makeTaskDone(trackToAdd: trackerRecord.TrackerRecord)
+        } else {
+            makeTaskUndone(trackToRemove: trackerRecord.TrackerRecord)
+        }
     }
     
     //TODO: Реализвать через публичную функцию
@@ -369,6 +392,42 @@ final class TrackerViewController: UIViewController {
         let trackerToCheck = TrackerRecord(id: tracker.id, date: dateOnDatePickerString)
         let check = coreDataManager.isTrackerExistInTrackerRecord(trackerToCheck: trackerToCheck)
         return check
+    }
+    
+    func findTrackerAndIndexPathByTouch(sender: UIButton) -> (Tracker: TrackerCoreData, indexPath: IndexPath)? {
+
+        let touchPoint = sender.convert(CGPoint.zero, to: view)
+        //        print("buttonIndexPath \(touchPoint)")
+
+        if trackersCollectionView.frame.contains(touchPoint) {
+            //            print("Tracker")
+            let convertedPoint = view.convert(touchPoint, to: trackersCollectionView)
+            guard let indexPath = trackersCollectionView.indexPathForItem(at: convertedPoint),
+                  let tracker = coreDataManager.trackersFetchedResultsController?.object(at: indexPath) else { return nil }
+            return (tracker, indexPath)
+        }
+        if stickyCollectionView.frame.contains(touchPoint) {
+            //            print("Sticky")
+            let convertedPoint = view.convert(touchPoint, to: stickyCollectionView)
+            //            print("convertedPoint \(convertedPoint)")
+
+            guard let indexPath = stickyCollectionView.indexPathForItem(at: convertedPoint),
+                  let tracker = coreDataManager.pinnedTrackersFetchedResultsController?.object(at: indexPath)
+            else { print("Yhhh"); return nil}
+            //            print(indexPath)
+            return (tracker, indexPath)
+        }
+        return nil
+    }
+    
+    func isTrackerExistInTrackerRecord(tracker: TrackerCoreData, date: Date) ->
+    (TrackerRecord: TrackerRecord, isExist: Bool)? {
+        guard let trackerID = tracker.id else { print("234"); return nil }
+        let currentDateString = MainHelper.dateToString(date: date)
+        let trackerToCheck = TrackerRecord(id: trackerID, date: currentDateString)
+        let check = coreDataManager.isTrackerExistInTrackerRecord(trackerToCheck: trackerToCheck)
+
+        return (trackerToCheck, check)
     }
 }
 

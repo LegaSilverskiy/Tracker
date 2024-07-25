@@ -33,7 +33,7 @@ struct MainHelper {
 
     static func countOfDaysForTheTrackerInString(trackerId: String) -> String {
         let trackerCount =  TrackerCoreManager.shared.countOfTrackerInRecords(trackerIDToCount: trackerId)
-        let correctDaysInRussian = String.localizedStringWithFormat( "numberOfDays", trackerCount)
+        let correctDaysInRussian = String.localizedStringWithFormat( NSLocalizedString("numberOfDays", comment: "Number of remaining tasks"), trackerCount)
         return correctDaysInRussian
     }
 }

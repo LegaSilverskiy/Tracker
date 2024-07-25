@@ -21,18 +21,21 @@ extension TrackerViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCollectionViewCell.identifier, for: indexPath) as? TrackerCollectionViewCell else { print("We have some problems with CustomCell");
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: TrackerCollectionViewCell.identifier,
+            for: indexPath) as? TrackerCollectionViewCell else {
+            print("We have some problems with CustomCell")
             return UICollectionViewCell()
         }
-        let interaction = UIContextMenuInteraction(delegate: self)
-        cell.frameView.addInteraction(interaction)
-        configureCell(cell: cell, indexPath: indexPath)
-        
-        
+
+        if collectionView == stickyCollectionView {
+            configureStickyCollection(cell: cell, indexPath: indexPath)
+        } else {
+            configureTrackerCollection(cell: cell, indexPath: indexPath)
+        }
         return cell
     }
     
-
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         var id = ""

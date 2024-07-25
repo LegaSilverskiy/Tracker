@@ -20,7 +20,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     
     let emojiLabelSize = CGFloat(24)
     let plusButtonSize = CGFloat(34)
-    var days = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -38,7 +37,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         let plusImage = UIImage(systemName: "plus")?.withTintColor(.colorForCellPlus, renderingMode: .alwaysOriginal)
         plusButton.setImage(plusImage, for: .normal)
 
-        daysLabel.text = "\(days) дней"
         daysLabel.font = .systemFont(ofSize: 12, weight: .medium)
         
         contentView.addSubview(frameView)

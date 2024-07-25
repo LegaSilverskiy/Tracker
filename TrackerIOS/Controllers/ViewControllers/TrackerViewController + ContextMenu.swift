@@ -62,6 +62,7 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
             guard let self else { return }
 
             if collection == trackersCollectionView {
+                print("Коллекция: \(collection)")
                 coreDataManager.pinTracker(indexPath: indexPath)
             } else {
                 coreDataManager.unpinTracker(indexPath: indexPath)

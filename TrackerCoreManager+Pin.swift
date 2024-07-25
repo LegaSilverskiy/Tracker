@@ -92,8 +92,6 @@ extension TrackerCoreManager {
             at: indexPath) else {
             print("Smth is going wrong")
             return }
-        //        print("indexPath \(indexPath)")
-        //        print("tracker.name \(tracker.name)")
         tracker.isPinned = true
         print("Tracker is Pinned ✅")
         save()
