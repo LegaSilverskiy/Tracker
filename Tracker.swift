@@ -10,20 +10,17 @@ import UIKit
 struct Tracker {
     let id: UUID
     let name: String
-    let color: UIColor
+    let color: String
     let emoji: String
     let schedule: String
+    var isPinned: Bool? = false
 }
 
 extension Tracker {
     init(coreDataObject: TrackerCoreData) {
         self.id = coreDataObject.id  ?? UUID()
         self.name = coreDataObject.name ?? ""
-        if let colorName = coreDataObject.colorName {
-            self.color = UIColor(hex: colorName)
-        } else {
-            self.color = UIColor.black
-        }
+        self.color = coreDataObject.colorName ?? "#000000"
         self.emoji = coreDataObject.emoji ?? ""
         self.schedule = coreDataObject.schedule ?? ""
     }

@@ -234,9 +234,8 @@ final class UnregularEventViewController: UIViewController {
               let name = nameTracker.text,
               let selectedColor = selectedColor,
               let selectedEmoji = selectedEmoji else { print("Что-то пошло не так"); return }
-        let color = UIColor(hex: selectedColor)
         
-        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс")])
+        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: selectedColor, emoji: selectedEmoji, schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс")])
         coreDataManager.createNewTracker(newTracker: newTask)
         informAnotherVCofCreatingTracker?()
     }

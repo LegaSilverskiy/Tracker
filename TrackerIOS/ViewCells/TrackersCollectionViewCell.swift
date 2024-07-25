@@ -16,6 +16,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     let emojiLabel = UILabel()
     let plusButton = UIButton()
     let daysLabel = UILabel()
+    let pinImage = UIImageView()
     
     let emojiLabelSize = CGFloat(24)
     let plusButtonSize = CGFloat(34)
