@@ -657,5 +657,65 @@ extension TrackerCoreManager {
         
         setupTrackerFetchedResultsController(request: request)
     }
+    
+    func getAllTrackerRecordForDate(date: String) -> [String?] {
+        let request = TrackerRecordCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerRecordCoreData.date),
+                                    date)
+        request.predicate = predicate
+        request.propertiesToFetch = ["id"]
+
+        var result = [String?]()
+        do {
+            let data = try context.fetch(request)
+            for tracker in data {
+                result.append(tracker.id?.uuidString)
+            }
+            return result
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+            return ["Ooops"]
+        }
+    }
+    
+    func getTrackersExceptWithID(trackerNotToShow trackerId: [String], weekDay: String) {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate1 = NSPredicate(format: "schedule CONTAINS %@", weekDay)
+        let predicate2 = NSPredicate(format: "schedule CONTAINS %@", NSLocalizedString("Everyday", comment: ""))
+        let predicate3 = NSPredicate(format: "NOT (%K IN %@)",
+                                     #keyPath(TrackerCoreData.id), trackerId)
+        let predicate4 = NSPredicate(format: "%K = %@",
+                                     #keyPath(TrackerCoreData.isPinned),
+                                     NSNumber(value: false))
+        let datePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2])
+        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates:
+                                [datePredicate, predicate3, predicate4])
+        request.predicate = compoundPredicate
+
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request.sortDescriptors = [sort]
+
+        filterButtonForEmptyScreenIsEnable = true
+
+        setupTrackerFetchedResultsController(request: request)
+    }
+    
+    func getCompletedTrackersWithID(completedTrackerId: [String]) {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate1 = NSPredicate(format: "%K IN %@",
+                                    #keyPath(TrackerCoreData.id), completedTrackerId)
+        let predicate2 = NSPredicate(format: "%K = %@",
+                                     #keyPath(TrackerCoreData.isPinned),
+                                     NSNumber(value: false))
+        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request.predicate = compoundPredicate
+        request.sortDescriptors = [sort]
+
+        setupTrackerFetchedResultsController(request: request)
+
+    }
+
 }
 

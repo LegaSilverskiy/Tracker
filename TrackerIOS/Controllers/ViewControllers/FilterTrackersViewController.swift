@@ -118,7 +118,7 @@ extension FilterTrackersViewController: UITableViewDataSource, UITableViewDelega
     func designLastChosenFilter(cell: UITableViewCell) {
         if cell.textLabel?.text == selectedFilter {
             let selectionImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 14, height: 14))
-            selectionImage.image = UIImage(named: "checkmark")
+            selectionImage.image = UIImage(systemName: "checkmark")
             cell.accessoryView = selectionImage
         }
     }

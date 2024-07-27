@@ -27,7 +27,7 @@ final class TrackerViewController: UIViewController {
     private var newData: [TrackerCategory] {
         isSearchMode ? filteredData : categories
     }
-    var filter: String?
+    var filterStr: String?
     var isFilter = false
     
     
@@ -51,7 +51,7 @@ final class TrackerViewController: UIViewController {
         return button
     }()
     
-    private lazy var datePicker: UIDatePicker = {
+    lazy var datePicker: UIDatePicker = {
         let date = UIDatePicker()
         date.addTarget(self, action: #selector(datePickerTapped), for: .valueChanged)
         date.calendar = Calendar(identifier: .gregorian)
@@ -166,7 +166,7 @@ final class TrackerViewController: UIViewController {
     //MARK: Private Methods
     
     //TODO: Реализовать через enum, чтобы не жанглировать строками
-    private func dayNumberToDayString(weekDayNumber: Int?) -> String {
+    func dayNumberToDayString(weekDayNumber: Int?) -> String {
         let weekDay: [Int:String] = [1: "Вс", 2: "Пн", 3: "Вт", 4: "Ср",
                                      5: "Чт", 6: "Пт", 7: "Сб"]
         guard let weekDayNumber = weekDayNumber,
@@ -226,7 +226,14 @@ final class TrackerViewController: UIViewController {
     }
     private func showOrHidePlaceholder() {
         let isDataEmpty = coreDataManager.isCoreDataEmpty
-        isDataEmpty ? showPlaceholderForEmptyScreen() : hidePlaceholderForEmptyScreen()
+        
+        if isDataEmpty {
+            showPlaceholderForEmptyScreen()
+            filtersButton.isHidden = true
+        }  else
+        { hidePlaceholderForEmptyScreen()
+            filtersButton.isHidden = false
+        }
     }
     private func hidePlaceholderForEmptyScreen() {
         emptyTrackerImage.isHidden = true
@@ -466,7 +473,7 @@ final class TrackerViewController: UIViewController {
         let isFilter = isFilter
         
         if isFilter {
-            guard let filter = filter else { print("Ooops"); return }
+            guard let filter = filterStr else { print("Ooops"); return }
             getFilterFromPreviousVC(filter: filter)
         } else {
             uploadDataFormCoreData()
@@ -501,27 +508,6 @@ extension TrackerViewController: DataProviderDelegate {
     func didUpdate(_ update: TrackersStoreUpdate) {
         trackersCollectionView.reloadData()
         showOrHidePlaceholder()
-    }
-}
-//MARK: Переделать череp enum
-extension TrackerViewController: FilterCategoryDelegate {
-    func getFilterFromPreviousVC(filter: String) {
-        switch filter {
-        case "Все трекеры":
-            coreDataManager.setupFetchedResultsController(weekDay: weekDay)
-        case "Трекеры на сегодня":
-            let calendar = Calendar.current
-            let date = Date()
-            let dateComponents = calendar.dateComponents([.weekday], from: date)
-            let weekDay = dateComponents.weekday
-            let weekDayString = dayNumberToDayString(weekDayNumber: weekDay)
-            print(weekDayString)
-            coreDataManager.setupFetchedResultsController(weekDay: weekDayString)
-            trackersCollectionView.reloadData()
-            datePicker.date = date
-        case "Завершенные": dismiss(animated: true)
-        default: dismiss(animated: true)
-        }
     }
 }
 extension TrackerViewController: CloseScreenDelegate {
