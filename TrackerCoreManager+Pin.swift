@@ -32,7 +32,7 @@ extension TrackerCoreManager {
         }
     }
 
-    func setupPinnedFRCWithRequest(request: NSFetchRequest<TrackerCoreData>) {
+    func setupPinnedFetchResultControllerWithRequest(request: NSFetchRequest<TrackerCoreData>) {
         pinnedTrackersFetchedResultsController = NSFetchedResultsController(
             fetchRequest: request,
             managedObjectContext: context,
@@ -59,18 +59,7 @@ extension TrackerCoreManager {
         request.sortDescriptors = [sort]
         request.predicate = compoundPredicate
 
-        setupPinnedFRCWithRequest(request: request)
-    }
-
-    func getEmptyPinnedCollection() {
-        let request = TrackerCoreData.fetchRequest()
-        let predicate = NSPredicate(format: "%K = %@",
-                                     #keyPath(TrackerCoreData.id.uuidString), "impossible trackerId")
-        let sort = NSSortDescriptor(key: "category.header", ascending: true)
-        request.sortDescriptors = [sort]
-        request.predicate = predicate
-
-        setupPinnedFRCWithRequest(request: request)
+        setupPinnedFetchResultControllerWithRequest(request: request)
     }
 
     func getInCompletePinnedTracker(trackerNotToShow trackerId: [String]) {
@@ -84,7 +73,7 @@ extension TrackerCoreManager {
         request.sortDescriptors = [sort]
         request.predicate = compoundPredicate
 
-        setupPinnedFRCWithRequest(request: request)
+        setupPinnedFetchResultControllerWithRequest(request: request)
     }
 
     func pinTracker(indexPath: IndexPath) {
@@ -100,8 +89,6 @@ extension TrackerCoreManager {
     func unpinTracker(indexPath: IndexPath) {
         guard let tracker = pinnedTrackersFetchedResultsController?.object(at: indexPath) else {
             print("Smth is going wrong"); return }
-        //        print("indexPath \(indexPath)")
-        //        print("tracker.name \(tracker.name)")
         tracker.isPinned = false
         print("Tracker is Unpinned")
         save()

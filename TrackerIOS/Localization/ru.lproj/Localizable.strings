@@ -26,6 +26,8 @@
 "Nothing found" = "Ничего не найдено";
 "Tracker" = "Трекеры";
 "One-time event" = "Нерегулярные события";
+"Filter" = "Фильтр";
+"Not completed" = "Не завершенные";
 "Cancel" = "Отмена";
 "Create" = "Создать";
 "Pinned" = "Закрепленные";

@@ -23,6 +23,10 @@ final class TrackerCoreManager: NSObject {
     
     weak var delegate: DataProviderDelegate?
     
+    var lastChosenFilter: String?
+    
+    var filterButtonForEmptyScreenIsEnable = false
+    
     private override init() { }
     
     // MARK: - Container, context
@@ -68,9 +72,9 @@ final class TrackerCoreManager: NSObject {
         request.predicate = compoundPredicate
         
         trackersFetchedResultsController = NSFetchedResultsController(fetchRequest: request,
-                                                              managedObjectContext: context,
-                                                              sectionNameKeyPath: "category.header",
-                                                              cacheName: nil)
+                                                                      managedObjectContext: context,
+                                                                      sectionNameKeyPath: "category.header",
+                                                                      cacheName: nil)
         
         trackersFetchedResultsController?.delegate = self
         
@@ -100,7 +104,7 @@ final class TrackerCoreManager: NSObject {
         let sort = NSSortDescriptor(key: "category.header", ascending: true)
         request.sortDescriptors = [sort]
         request.predicate = finalCompoundPredicate
-
+        
         setupTrackerFetchedResultsController(request: request)
     }
     
@@ -110,9 +114,9 @@ final class TrackerCoreManager: NSObject {
             managedObjectContext: context,
             sectionNameKeyPath: "category.header",
             cacheName: nil)
-
+        
         trackersFetchedResultsController?.delegate = self
-
+        
         do {
             try trackersFetchedResultsController?.performFetch()
         } catch {
@@ -145,7 +149,7 @@ final class TrackerCoreManager: NSObject {
             let allTrackers = try context.fetch(fetchRequest)
             let result = transformCoreDataToModel(trackerCategoryCoreData: allTrackers)
             print("fetchData: \n------------------------------")
-
+            
             for trackerCategory in result {
                 print("trackerCategory.header \(trackerCategory.header)")
                 print("trackerCategory.trackers \(trackerCategory.trackers)")
@@ -164,7 +168,7 @@ final class TrackerCoreManager: NSObject {
         })
         return trackersCategory
     }
-
+    
     func createNewCategory(newCategoryName: String) {
         let newCategory = TrackerCategoryCoreData(context: context)
         newCategory.header = newCategoryName
@@ -174,16 +178,16 @@ final class TrackerCoreManager: NSObject {
     
     func createNewTracker(newTracker: TrackerCategory) {
         let header = newTracker.header
-
+        
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "header = %@", header)
-
+        
         do {
             let result = try context.fetch(fetchRequest)
             guard let category = result.first,
                   let tracker = newTracker.trackers.first else {
                 print("May be here?"); return }
-
+            
             let newTrackerToAdd = TrackerCoreData(context: context)
             newTrackerToAdd.id = tracker.id
             newTrackerToAdd.name = tracker.name
@@ -205,7 +209,7 @@ final class TrackerCoreManager: NSObject {
                                     #keyPath(TrackerCoreData.id),
                                     trackerIDToDelete.uuidString)
         request.predicate = predicate
-
+        
         do {
             let result = try context.fetch(request)
             for tracker in result where tracker.category?.header == categoryName {
@@ -235,10 +239,10 @@ final class TrackerCoreManager: NSObject {
     func save() {
         let context = persistentContainer.viewContext
         if context.hasChanges {
-            do  {
+            do {
                 try context.save()
             } catch {
-                print(error.localizedDescription)
+                print("\(error.localizedDescription) 🟥")
             }
         }
     }
@@ -248,17 +252,17 @@ final class TrackerCoreManager: NSObject {
         let predicate = NSPredicate(format: "NOT (%K == %@)",
                                     #keyPath(TrackerCategoryCoreData.header), "Закрепленные")
         request.predicate = predicate
-
+        
         let result = try? context.fetch(request)
-
+        
         guard let result = result else { return ["Ошибка"]}
         let headers = result.map { $0.header ?? "Ooops" }
-
+        
         return headers
     }
     func numberOfRowsInStickySection() -> Int {
         guard let sections = trackersFetchedResultsController?.sections else { print("Hmmm"); return 0}
-
+        
         for section in sections where section.name == "Закрепленные" {
             
             return section.numberOfObjects
@@ -399,7 +403,7 @@ extension TrackerCoreManager {
             print(error.localizedDescription)
         }
     }
-        
+    
     func addTrackerRecord(trackerToAdd: TrackerRecord) {
         let newTrackerRecord = TrackerRecordCoreData(context: context)
         newTrackerRecord.id = trackerToAdd.id
@@ -414,7 +418,7 @@ extension TrackerCoreManager {
                                     #keyPath(TrackerRecordCoreData.id),
                                     trackerIDToCount)
         request.predicate = predicate
-
+        
         do {
             return try context.count(for: request)
         } catch {
@@ -426,7 +430,7 @@ extension TrackerCoreManager {
     func deleteAllRecords() {
         let request: NSFetchRequest<NSFetchRequestResult> = TrackerRecordCoreData.fetchRequest()
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
-
+        
         do {
             try context.execute(deleteRequest)
             print("All TrackerRecords deleted successfully ✅")
@@ -445,7 +449,7 @@ extension TrackerCoreManager {
         let predicate = NSPredicate(format: "%K == %@",
                                     #keyPath(TrackerRecordCoreData.id), trackerID)
         request.predicate = predicate
-
+        
         do {
             let result = try context.fetch(request)
             for records in result {
@@ -466,7 +470,7 @@ extension TrackerCoreManager {
                                      #keyPath(TrackerRecordCoreData.date), trackerToRemove.date)
         let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
         request.predicate = compoundPredicate
-
+        
         do {
             let result = try context.fetch(request)
             if let trackerToDelete = result.first {
@@ -480,10 +484,10 @@ extension TrackerCoreManager {
             print("\(error.localizedDescription) 🟥")
         }
     }
-
+    
     func printAllTrackerRecords() {
         let request = TrackerRecordCoreData.fetchRequest()
-
+        
         do {
             let result = try context.fetch(request)
             for element in result {
@@ -509,9 +513,9 @@ extension TrackerCoreManager {
         let predicate = NSPredicate(format: "%K CONTAINS %@",
                                     #keyPath(TrackerCoreData.schedule), weekDay)
         request.predicate = predicate
-
+        
         var result = [String: Int]()
-
+        
         do {
             let data = try context.count(for: request)
             result[weekDay] = data
@@ -527,12 +531,12 @@ extension TrackerCoreManager {
         let predicate = NSPredicate(format: "%K CONTAINS %@",
                                     #keyPath(TrackerRecordCoreData.date), date)
         request.predicate = predicate
-
+        
         var trackerRecordsForDate: [String: Int] = [:]
-
+        
         do {
             let data = try context.fetch(request)
-
+            
             for tracker in data {
                 trackerRecordsForDate[tracker.date!] = (trackerRecordsForDate[tracker.date!] ?? 0) + 1
             }
@@ -548,10 +552,10 @@ extension TrackerCoreManager {
         let request = TrackerRecordCoreData.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
         var countsByDate: [String: Int] = [:]
-
+        
         do {
             let data = try context.fetch(request)
-
+            
             for tracker in data {
                 countsByDate[tracker.date!] = (countsByDate[tracker.date!] ?? 0) + 1
             }
@@ -587,16 +591,16 @@ extension TrackerCoreManager {
     }
     
     func deleteTracker(at indexPath: IndexPath) {
-
+        
         deleteAllTrackerRecordsForTracker(at: indexPath)
-
+        
         guard let tracker = trackersFetchedResultsController?.object(at: indexPath) else {
             print("Smth is going wrong"); return }
         context.delete(tracker)
         print("Tracker deleted ✅")
         save()
     }
-
+    
     func isTrackerExistInTrackerRecord(trackerToCheck: TrackerRecord) -> Bool {
         let request = TrackerRecordCoreData.fetchRequest()
         let predicate1 = NSPredicate(format: "%K == %@",
@@ -617,3 +621,41 @@ extension TrackerCoreManager {
         }
     }
 }
+
+extension TrackerCoreManager {
+    func sendLastChosenFilterToStore(filterName: String) {
+        self.lastChosenFilter = filterName
+    }
+    
+    func getLastChosenFilterFromStore() -> String {
+        if let lastChosenFilter =  self.lastChosenFilter {
+            return lastChosenFilter
+        } else {
+            return "Smth is going wrong"
+        }
+    }
+    
+    func getEmptyPinnedCollection() {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K = %@",
+                                    #keyPath(TrackerCoreData.id.uuidString), "impossible trackerId")
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request.sortDescriptors = [sort]
+        request.predicate = predicate
+        
+        setupPinnedFetchResultControllerWithRequest(request: request)
+    }
+    func getEmptyTrackerCollection() {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K = %@",
+                                    #keyPath(TrackerCoreData.id.uuidString), "impossible trackerId")
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request.predicate = predicate
+        request.sortDescriptors = [sort]
+        
+        filterButtonForEmptyScreenIsEnable = true
+        
+        setupTrackerFetchedResultsController(request: request)
+    }
+}
+

@@ -47,14 +47,26 @@ extension TrackerViewController: UICollectionViewDataSource {
         default:
             id = ""
         }
-        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SuplementaryView else {
+
+        guard let view = collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SuplementaryView else {
             print("We have some problems with header"); return UICollectionReusableView()
         }
-        
-        if let headers = coreDataManager.trackersFetchedResultsController?.sections  {
-            view.label.text = headers[indexPath.section].name
+        if kind == UICollectionView.elementKindSectionHeader {
+            collectionsHeaders(collection: collectionView, view: view, indexPath: indexPath)
         }
         return view
+    }
+    
+    func collectionsHeaders(collection: UICollectionView, view: SuplementaryView, indexPath: IndexPath) {
+        if collection == stickyCollectionView {
+            let header = NSLocalizedString("Pinned", comment: "")
+            view.label.text = header
+        } else {
+            if let headers = coreDataManager.trackersFetchedResultsController?.sections {
+                view.label.text = headers[indexPath.section].name
+            }
+        }
     }
     
 }
@@ -88,6 +100,7 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension TrackerViewController {
+    
     func setupStickyCollectionView() {
 
         stickyCollectionView.dataSource = self
@@ -110,17 +123,15 @@ extension TrackerViewController {
 
         stickyCollectionHeightConstraint = stickyCollectionView.heightAnchor.constraint(equalToConstant: 0)
         stickyCollectionHeightConstraint?.isActive = true
-
+        
+        setupContraints()
     }
     
     func calculationOfStickyCollectionHeight() -> CGFloat {
 
         guard let collectionElements = coreDataManager.pinnedTrackersFetchedResultsController?.fetchedObjects?.count else {
             print("Nil"); return 0}
-//        coreDataManager.numberOfPinnedItems()
-        //                print("collectionElements \(collectionElements)")
         let numberOfRows = ceil(Double(collectionElements) / 2.0)
-        //                print("numberOfRows \(numberOfRows)")
         let cellHeight = numberOfRows > 1 ? 180 : 200
         let collectionHeight = numberOfRows * Double(cellHeight)
 
@@ -131,6 +142,25 @@ extension TrackerViewController {
 
         let height = calculationOfStickyCollectionHeight()
         stickyCollectionHeightConstraint?.constant = height
-//        print("stickyCollectionHeightConstraint \(height)")
     }
+    
+    func setupContraints() {
+
+        view.addSubViews([stickyCollectionView, trackersCollectionView])
+
+        NSLayoutConstraint.activate([
+            stickyCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            stickyCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            stickyCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+
+            trackersCollectionView.topAnchor.constraint(equalTo: stickyCollectionView.bottomAnchor),
+            trackersCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
+
+        setStickyCollectionHeight()
+
+    }
+
 }
