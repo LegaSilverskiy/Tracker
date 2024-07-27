@@ -29,6 +29,7 @@ final class TrackerViewController: UIViewController {
     }
     var filterStr: String?
     var isFilter = false
+    var analytics = AnalyticsService()
     
     
     
@@ -101,6 +102,13 @@ final class TrackerViewController: UIViewController {
         dataUpd()
         coreDataManager.setupPinnedFetchedResultsController()
         setupFiltersButton()
+        analytics.openMainScreen()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        analytics.closeMainScreen()
     }
     
     //MARK: Actions
@@ -109,6 +117,7 @@ final class TrackerViewController: UIViewController {
         let navigation = UINavigationController(rootViewController: createNewHabit)
         present(navigation, animated: true)
         createNewHabit.closeScreenDelegate = self
+        analytics.addTrackerButton()
     }
     
     @objc func cellButtonTapped(_ sender: UIButton) {
@@ -121,6 +130,7 @@ final class TrackerViewController: UIViewController {
         print("trackerRecord \(trackerRecord)")
         
         makeTrackerDoneOrUndone(trackerRecord: trackerRecord)
+        analytics.trackerButtonTapped()
     }
     
     
@@ -135,6 +145,7 @@ final class TrackerViewController: UIViewController {
         let filterVC = FilterTrackersViewController()
         let navVC = UINavigationController(rootViewController: filterVC)
         filterVC.filterDelegate = self
+        analytics.filterButtonTapped()
         present(navVC, animated: true)
     }
     

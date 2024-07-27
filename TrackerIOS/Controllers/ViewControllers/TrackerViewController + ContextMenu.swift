@@ -88,6 +88,8 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
             
             self.passTrackerToEditDelegate?.passTrackerIndexPathToEdit(tracker: tracker, indexPath: indexPath)
             
+            analytics.editButtonTapped()
+            
         }
         return editAction
     }
@@ -104,6 +106,7 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
         let deleteAction = UIAction(title: NSLocalizedString("Delete", comment: "Delete tracker"), attributes: .destructive) { [weak self] _ in
             guard let self else { return }
             self.showAlert(collection: collection, indexPath: indexPath)
+            analytics.deleteButtonTapped()
         }
         return deleteAction
     }
