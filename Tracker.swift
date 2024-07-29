@@ -23,5 +23,6 @@ extension Tracker {
         self.color = coreDataObject.colorName ?? "#000000"
         self.emoji = coreDataObject.emoji ?? ""
         self.schedule = coreDataObject.schedule ?? ""
+        self.isPinned = coreDataObject.isPinned
     }
 }

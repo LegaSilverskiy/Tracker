@@ -56,20 +56,15 @@ extension StatisticViewModel {
             print("We have some problems with finding the first date - maybe we don't have any trackerRecords"); return
         }
 
-        // Тут мы считаем кол-во дней для среднего значения
         daysBetweenFirstTrRecordAndCurrentDate = countOfDaysBetween(
             startDate: startDate, currentDate: currentDate)
 
-        // Тут мы проходимся по всем дням между первой датой рекорда и текущей датой
         while startDate < currentDate {
 
-            // Тут кол-во трекеров, которые выполнены в этот день
             let completedTrackersOnThisDate = countOfCompletedTrackersOnThisDate(date: startDate)
 
-            // Тут кол-во трекеров, которые должны быть выполнены в этот день
             let trackersToDo = trackersToDoOnTheDate(date: startDate)
 
-            // Тут для каждого дня считаем выполнены ли все трекеры и если да - то будет 1, если нет - 0
             let isThisIdealDate = calculateIsThisAnIdealDay(
                 trackersToDo: trackersToDo, completedTracker: completedTrackersOnThisDate)
             arrayOfDays.append(isThisIdealDate)
@@ -109,9 +104,6 @@ extension StatisticViewModel {
 // MARK: - Point 4 - Completed Trackers Per Day
 extension StatisticViewModel {
     func trackerRecordsPerDay() {
-
-        // У нас есть кол-во выполненных трекеров и есть кол-во дней, тут просто делим
-        // одно на другое и причесываем формат. И также мы тут проверяем деление на 0
 
         if daysBetweenFirstTrRecordAndCurrentDate != 0 {
             let recordsPerDay = Double(completedTrackers) / Double(daysBetweenFirstTrRecordAndCurrentDate)
@@ -193,7 +185,6 @@ extension StatisticViewModel {
 
     func calculateIsThisAnIdealDay(trackersToDo: Int, completedTracker: Int) -> Int? {
         if trackersToDo == 0 {
-//            print("Nothing to do")
             return nil
         } else {
             let resultForTheDay = isAllTrackerCompleted(trackersToDo: trackersToDo, completedTracker: completedTracker)

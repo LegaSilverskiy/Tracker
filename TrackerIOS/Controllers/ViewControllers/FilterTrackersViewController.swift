@@ -23,7 +23,7 @@ final class FilterTrackersViewController: UIViewController {
     
     let trackerCoreManager = TrackerCoreManager.shared
 
-    var selectedFilter = String()
+    var selectedFilter = ""
 
 
     // MARK: - Live Cycles

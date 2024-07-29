@@ -40,8 +40,8 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         daysLabel.font = .systemFont(ofSize: 12, weight: .medium)
         
         contentView.addSubview(frameView)
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(emojiLabel)
+        frameView.addSubview(titleLabel)
+        frameView.addSubview(emojiLabel)
         contentView.addSubview(daysLabel)
         contentView.addSubview(plusButton)
         

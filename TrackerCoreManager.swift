@@ -62,34 +62,21 @@ final class TrackerCoreManager: NSObject {
     var trackersFetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
     var pinnedTrackersFetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
     
-    func setupFetchedResultsController(weekDay: String) {
-        let request = TrackerCoreData.fetchRequest()
-        let predicate1 = NSPredicate(format: "schedule CONTAINS %@", weekDay)
-        let predicate2 = NSPredicate(format: "schedule CONTAINS %@", "Каждый день")
-        let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2])
-        let sort = NSSortDescriptor(key: "category.header", ascending: true)
-        request.sortDescriptors = [sort]
-        request.predicate = compoundPredicate
-        
-        trackersFetchedResultsController = NSFetchedResultsController(fetchRequest: request,
-                                                                      managedObjectContext: context,
-                                                                      sectionNameKeyPath: "category.header",
-                                                                      cacheName: nil)
-        
-        trackersFetchedResultsController?.delegate = self
-        
-        do {
-            try trackersFetchedResultsController?.performFetch()
-            if let results = trackersFetchedResultsController?.fetchedObjects {
-                for element in results {
-                    print(element.name as Any)
-                    print(element.schedule as Any)
-                }
-            }
-        } catch  {
-            print(error.localizedDescription)
-        }
-    }
+//    func setupFetchedResultsController(request: NSFetchRequest<TrackerCoreData>) {
+//        trackersFetchedResultsController = NSFetchedResultsController(
+//            fetchRequest: request,
+//            managedObjectContext: context,
+//            sectionNameKeyPath: "category.header",
+//            cacheName: nil)
+//
+//        trackersFetchedResultsController?.delegate = self
+//
+//        do {
+//            try trackersFetchedResultsController?.performFetch()
+//        } catch {
+//            print("\(error.localizedDescription) 🟥")
+//        }
+//    }
     
     // MARK: - CRUD
     
@@ -123,26 +110,26 @@ final class TrackerCoreManager: NSObject {
             print("\(error.localizedDescription) 🟥")
         }
     }
-    
-    func printCoreData() {
-        let request = TrackerCoreData.fetchRequest()
-        let sort = NSSortDescriptor(key: "category.header", ascending: true)
-        request.sortDescriptors = [sort]
-        
-        do {
-            let result = try context.fetch(request)
-            for element in result {
-                print(element)
-                print(element.name as Any)
-                print(element.schedule as Any)
-                print(element.category?.header as Any)
-            }
-        } catch  {
-            print(error.localizedDescription)
-        }
-        
-    }
-    
+//
+//    func printCoreData() {
+//        let request = TrackerCoreData.fetchRequest()
+//        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+//        request.sortDescriptors = [sort]
+//        
+//        do {
+//            let result = try context.fetch(request)
+//            for element in result {
+//                print(element)
+//                print(element.name as Any)
+//                print(element.schedule as Any)
+//                print(element.category?.header as Any)
+//            }
+//        } catch  {
+//            print(error.localizedDescription)
+//        }
+//        
+//    }
+//    
     func fetchData() -> [TrackerCategory] {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         do {

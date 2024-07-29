@@ -65,7 +65,6 @@
 		EBF0D60F2C50D5D500A3030A /* EditingTrackerViewController+Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF0D60E2C50D5D500A3030A /* EditingTrackerViewController+Delegate.swift */; };
 		EBF0D6112C50E20500A3030A /* PassTrackerToEditDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF0D6102C50E20500A3030A /* PassTrackerToEditDelegate.swift */; };
 		EBF0D6132C52A03500A3030A /* FilterTrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF0D6122C52A03500A3030A /* FilterTrackersViewController.swift */; };
-		EBF0D6152C538F9B00A3030A /* TrackerViewConteroller + ScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF0D6142C538F9B00A3030A /* TrackerViewConteroller + ScrollView.swift */; };
 		EBF0D6172C53970100A3030A /* TrackerViweController + Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF0D6162C53970100A3030A /* TrackerViweController + Filter.swift */; };
 		EBF0D61A2C54F92A00A3030A /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF0D6192C54F92900A3030A /* AnalyticsService.swift */; };
 		EBF32EF92BCD208400ED63D4 /* SuplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF32EF82BCD208400ED63D4 /* SuplementaryView.swift */; };
@@ -147,7 +146,6 @@
 		EBF0D60E2C50D5D500A3030A /* EditingTrackerViewController+Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditingTrackerViewController+Delegate.swift"; sourceTree = "<group>"; };
 		EBF0D6102C50E20500A3030A /* PassTrackerToEditDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassTrackerToEditDelegate.swift; sourceTree = "<group>"; };
 		EBF0D6122C52A03500A3030A /* FilterTrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTrackersViewController.swift; sourceTree = "<group>"; };
-		EBF0D6142C538F9B00A3030A /* TrackerViewConteroller + ScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerViewConteroller + ScrollView.swift"; sourceTree = "<group>"; };
 		EBF0D6162C53970100A3030A /* TrackerViweController + Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerViweController + Filter.swift"; sourceTree = "<group>"; };
 		EBF0D6192C54F92900A3030A /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		EBF32EF82BCD208400ED63D4 /* SuplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuplementaryView.swift; sourceTree = "<group>"; };
@@ -338,7 +336,6 @@
 				EBF0D6162C53970100A3030A /* TrackerViweController + Filter.swift */,
 				EBF0D5FB2C50C9A800A3030A /* TrackerViewController + CollectionView.swift */,
 				EBF0D5FD2C50CA2700A3030A /* TrackerViewController + ContextMenu.swift */,
-				EBF0D6142C538F9B00A3030A /* TrackerViewConteroller + ScrollView.swift */,
 				EBF0D6122C52A03500A3030A /* FilterTrackersViewController.swift */,
 				EB46EFF52BC68848009F9B2A /* ChooseTypeTrackerViewController.swift */,
 				EB46EFF72BC6CEED009F9B2A /* UnregularEventViewController.swift */,
@@ -620,7 +617,6 @@
 				EBF0D6082C50D2F800A3030A /* EditingTrackerViewController+CollectionView.swift in Sources */,
 				EB70A0702B9EF286009EFEFC /* TrackerViewController.swift in Sources */,
 				EBF0D61A2C54F92A00A3030A /* AnalyticsService.swift in Sources */,
-				EBF0D6152C538F9B00A3030A /* TrackerViewConteroller + ScrollView.swift in Sources */,
 				EB43311A2C465B4C00DC0551 /* CategoriesViewModel.swift in Sources */,
 				EB150CE02C04933E0040F11D /* TrackerCoreData.xcdatamodeld in Sources */,
 				EBF0D60C2C50D32900A3030A /* EditingTrackerViewController+TableView.swift in Sources */,

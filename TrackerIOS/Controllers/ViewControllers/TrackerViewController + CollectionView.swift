@@ -9,17 +9,21 @@ import UIKit
 
 extension TrackerViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        coreDataManager.numberOfRowsInSection(section)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
+        if collectionView == stickyCollectionView {
+            return coreDataManager.numberOfPinnedTrackers(section)
+        } else {
+            return coreDataManager.numberOfRowsInSection(section)
+        }
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        coreDataManager.numberOfSections
+        if collectionView == stickyCollectionView {
+            return coreDataManager.pinnedSection
+        } else {
+            return coreDataManager.numberOfSections
+        }
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: TrackerCollectionViewCell.identifier,
@@ -76,6 +80,8 @@ extension TrackerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell
         cell?.titleLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        let interaction = UIContextMenuInteraction(delegate: self)
+        cell?.frameView.addInteraction(interaction)
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
@@ -97,35 +103,40 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
         9
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+
+            if collectionView == trackersCollectionView {
+                if section == collectionView.numberOfSections - 1 {
+                    return CGSize(width: collectionView.bounds.width, height: 60)
+                }
+            }
+            return CGSize(width: 0, height: 0)
+        }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
+    }
+    
 }
 
 extension TrackerViewController {
     
-    func setupStickyCollectionView() {
-
-        stickyCollectionView.dataSource = self
-        stickyCollectionView.delegate = self
-
-        stickyCollectionView.register(
-            TrackerCollectionViewCell.self,
-            forCellWithReuseIdentifier: TrackerCollectionViewCell.identifier)
-
-        stickyCollectionView.register(
-            SuplementaryView.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "header")
-        stickyCollectionView.register(
-            SuplementaryView.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-            withReuseIdentifier: "footer")
-
-        stickyCollectionView.backgroundColor = .white
-
-        stickyCollectionHeightConstraint = stickyCollectionView.heightAnchor.constraint(equalToConstant: 0)
-        stickyCollectionHeightConstraint?.isActive = true
+    
+    func setupCollectionView() {
+        
+        trackersCollectionView.dataSource = self
+        trackersCollectionView.delegate = self
+        trackersCollectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.identifier)
+        
+        trackersCollectionView.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        trackersCollectionView.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "footer")
+        
+        trackersCollectionView.translatesAutoresizingMaskIntoConstraints = false
         
         setupContraints()
+        
     }
+
     
     func calculationOfStickyCollectionHeight() -> CGFloat {
 

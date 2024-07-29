@@ -29,7 +29,6 @@ final class TrackerViewController: UIViewController {
     }
     var filterStr: String?
     var isFilter = false
-    var analytics = AnalyticsService()
     
     
     
@@ -77,38 +76,50 @@ final class TrackerViewController: UIViewController {
         getWeekdayFromCurrentDate(currentDate: currentDate)
     }
     
-    lazy var contentStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        return stack
+    lazy var contentViewForCollections: UIView = {
+        let contentView = UIView()
+        contentView.backgroundColor = .systemBackground
+        return contentView
     }()
     
+    let stackViewForCollections: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 24
+        stackView.backgroundColor = .systemBackground
+        return stackView
+    }()
+    
+    lazy var scrollViewForCollections: UIScrollView = {
+        let scroll = UIScrollView()
+        scroll.backgroundColor = .systemBackground
+        return scroll
+    }()
     //MARK: View Life Cycles
     
     override func viewDidLoad() {
         view.backgroundColor = .systemBackground
-        coreDataManager.setupFetchedResultsController(weekDay: weekDay)
+        coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
         categories = coreDataManager.fetchData()
         coreDataManager.setupPinnedFetchedResultsController()
         coreDataManager.delegate = self
-        setupCollectionView()
         showPlaceholderForEmptyScreen()
         setupSearchController()
+        setupCollections()
         completedTrackers = []
         showOrHidePlaceholder()
         navBarItem()
-        setupStickyCollectionView()
         coreDataManager.printTrackerRecord()
         dataUpd()
         coreDataManager.setupPinnedFetchedResultsController()
         setupFiltersButton()
-        analytics.openMainScreen()
+        AnalyticsService.openMainScreen()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-
-        analytics.closeMainScreen()
+        
+        AnalyticsService.closeMainScreen()
     }
     
     //MARK: Actions
@@ -117,7 +128,7 @@ final class TrackerViewController: UIViewController {
         let navigation = UINavigationController(rootViewController: createNewHabit)
         present(navigation, animated: true)
         createNewHabit.closeScreenDelegate = self
-        analytics.addTrackerButton()
+        AnalyticsService.addTrackerButton()
     }
     
     @objc func cellButtonTapped(_ sender: UIButton) {
@@ -130,7 +141,7 @@ final class TrackerViewController: UIViewController {
         print("trackerRecord \(trackerRecord)")
         
         makeTrackerDoneOrUndone(trackerRecord: trackerRecord)
-        analytics.trackerButtonTapped()
+        AnalyticsService.trackerButtonTapped()
     }
     
     
@@ -145,7 +156,7 @@ final class TrackerViewController: UIViewController {
         let filterVC = FilterTrackersViewController()
         let navVC = UINavigationController(rootViewController: filterVC)
         filterVC.filterDelegate = self
-        analytics.filterButtonTapped()
+        AnalyticsService.filterButtonTapped()
         present(navVC, animated: true)
     }
     
@@ -162,7 +173,7 @@ final class TrackerViewController: UIViewController {
         let weekDayString = dayNumberToDayString(weekDayNumber: weekDay)
         
         showCorrectTrackersWithFilter()
-        coreDataManager.setupFetchedResultsController(weekDay: weekDayString)
+        coreDataManager.getAllTrackersForWeekday(weekDay: weekDayString)
         trackersCollectionView.reloadData()
         showOrHidePlaceholder()
         navigationItem.searchController = searchField
@@ -170,11 +181,9 @@ final class TrackerViewController: UIViewController {
     }
     
     @objc private func updateDataWithNewCategoryNames(notification: Notification) {
-        coreDataManager.setupFetchedResultsController(weekDay: weekDay)
+        coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
         trackersCollectionView.reloadData()
     }
-    
-    //MARK: Private Methods
     
     //TODO: Реализовать через enum, чтобы не жанглировать строками
     func dayNumberToDayString(weekDayNumber: Int?) -> String {
@@ -212,20 +221,6 @@ final class TrackerViewController: UIViewController {
         ])
     }
     
-    private func setupCollectionView() {
-        
-        trackersCollectionView.dataSource = self
-        trackersCollectionView.delegate = self
-        trackersCollectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.identifier)
-        
-        trackersCollectionView.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-        trackersCollectionView.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "footer")
-        
-        trackersCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        
-        setupContraints()
-        
-    }
     
     private func navBarItem() {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "PlusButton"),
@@ -297,7 +292,6 @@ final class TrackerViewController: UIViewController {
             DispatchQueue.main.async {
                 self.trackersCollectionView.reloadData()
                 self.stickyCollectionView.reloadData()
-                self.setStickyCollectionHeight()
                 self.showOrHidePlaceholder()
             }
         }
@@ -323,7 +317,6 @@ final class TrackerViewController: UIViewController {
         }
         let pinnedTrackerCD = pinnedTrackers[indexPath.item]
         let pinnedTracker = Tracker(coreDataObject: pinnedTrackerCD)
-        
         configureCell(tracker: pinnedTracker, cell: cell)
     }
     func configureTrackerCollection(cell: TrackerCollectionViewCell, indexPath: IndexPath) {
@@ -353,8 +346,8 @@ final class TrackerViewController: UIViewController {
         
         showDoneOrUndoneTaskForDatePickerDate(tracker: tracker, cell: cell)
         
-        let interaction = UIContextMenuInteraction(delegate: self)
-        cell.frameView.addInteraction(interaction)
+        //        let interaction = UIContextMenuInteraction(delegate: self)
+        //        cell.frameView.addInteraction(interaction)
     }
     
     func updateDataFromCoreData(weekDay: String) {
@@ -524,5 +517,62 @@ extension TrackerViewController: DataProviderDelegate {
 extension TrackerViewController: CloseScreenDelegate {
     func closeFewVCAfterCreatingTracker() {
         self.dismiss(animated: true)
+    }
+}
+
+extension TrackerViewController {
+    func setupCollections() {
+        trackersCollectionView.dataSource = self
+        trackersCollectionView.delegate = self
+        trackersCollectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.identifier)
+        
+        trackersCollectionView.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        trackersCollectionView.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "footer")
+        
+        stickyCollectionView.dataSource = self
+        stickyCollectionView.delegate = self
+        stickyCollectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.identifier)
+        
+        stickyCollectionView.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        stickyCollectionView.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "footer")
+        
+        scrollViewForCollections.translatesAutoresizingMaskIntoConstraints = false
+        contentViewForCollections.translatesAutoresizingMaskIntoConstraints = false
+        stackViewForCollections.translatesAutoresizingMaskIntoConstraints = false
+        trackersCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        stickyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(scrollViewForCollections)
+        scrollViewForCollections.addSubview(contentViewForCollections)
+        contentViewForCollections.addSubview(stackViewForCollections)
+        stackViewForCollections.addArrangedSubview(stickyCollectionView)
+        stackViewForCollections.addArrangedSubview(trackersCollectionView)
+        
+        NSLayoutConstraint.activate([
+            scrollViewForCollections.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollViewForCollections.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            scrollViewForCollections.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            scrollViewForCollections.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            contentViewForCollections.topAnchor.constraint(equalTo: scrollViewForCollections.safeAreaLayoutGuide.topAnchor),
+            contentViewForCollections.leadingAnchor.constraint(equalTo: scrollViewForCollections.safeAreaLayoutGuide.leadingAnchor),
+            contentViewForCollections.trailingAnchor.constraint(equalTo: scrollViewForCollections.safeAreaLayoutGuide.trailingAnchor),
+            contentViewForCollections.bottomAnchor.constraint(equalTo: scrollViewForCollections.safeAreaLayoutGuide.bottomAnchor),
+            
+            stackViewForCollections.topAnchor.constraint(equalTo: contentViewForCollections.topAnchor),
+            stackViewForCollections.leadingAnchor.constraint(equalTo: contentViewForCollections.leadingAnchor, constant: 16),
+            stackViewForCollections.trailingAnchor.constraint(equalTo: contentViewForCollections.trailingAnchor, constant: -16),
+            stackViewForCollections.bottomAnchor.constraint(equalTo: contentViewForCollections.bottomAnchor),
+            
+            stickyCollectionView.leadingAnchor.constraint(equalTo: stackViewForCollections.leadingAnchor),
+            stickyCollectionView.trailingAnchor.constraint(equalTo: stackViewForCollections.trailingAnchor),
+            
+            
+            trackersCollectionView.leadingAnchor.constraint(equalTo: stackViewForCollections.leadingAnchor),
+            trackersCollectionView.trailingAnchor.constraint(equalTo: stackViewForCollections.trailingAnchor)
+            
+        ])
+        setStickyCollectionHeight()
+        
     }
 }

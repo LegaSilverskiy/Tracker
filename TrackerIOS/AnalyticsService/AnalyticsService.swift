@@ -18,63 +18,63 @@ struct AnalyticsService {
         YMMYandexMetrica.activate(with: configuration)
     }
 
-    private func report(event: String, params: [AnyHashable: Any]) {
+    static func report(event: String, params: [AnyHashable: Any]) {
         YMMYandexMetrica.reportEvent(event, parameters: params, onFailure: { error in
             print("REPORT ERROR: %@", error.localizedDescription)
         })
     }
 
-    func openMainScreen() {
+    static func openMainScreen() {
         let openMainScreenParams: [String: String] = [
             "event": "open",
             "screen": "Main"]
-        report(event: "openMainScreen", params: openMainScreenParams)
+        AnalyticsService.report(event: "openMainScreen", params: openMainScreenParams)
     }
 
-    func closeMainScreen() {
+    static func closeMainScreen() {
         let closeMainScreenParams: [String: String] = [
             "event": "close",
             "screen": "Main"]
-        report(event: "closeMainScreen", params: closeMainScreenParams)
+        AnalyticsService.report(event: "closeMainScreen", params: closeMainScreenParams)
     }
 
-    func addTrackerButton() {
+    static func addTrackerButton() {
         let addTrackerButtonTappedParams: [String: String] = [
             "event": "click",
             "screen": "Main",
             "item": "add_track"]
-        report(event: "addTrackerButtonTapped", params: addTrackerButtonTappedParams)
+        AnalyticsService.report(event: "addTrackerButtonTapped", params: addTrackerButtonTappedParams)
     }
 
-    func trackerButtonTapped() {
+    static func trackerButtonTapped() {
         let trackerButtonTappedParams: [String: String] = [
             "event": "click",
             "screen": "Main",
             "item": "track"]
-        report(event: "trackerButtonTapped", params: trackerButtonTappedParams)
+        AnalyticsService.report(event: "trackerButtonTapped", params: trackerButtonTappedParams)
     }
 
-    func filterButtonTapped() {
+    static func filterButtonTapped() {
         let filterButtonTappedParams: [String: String] = [
             "event": "click",
             "screen": "Main",
             "item": "filter"]
-        report(event: "filterButtonTapped", params: filterButtonTappedParams)
+        AnalyticsService.report(event: "filterButtonTapped", params: filterButtonTappedParams)
     }
 
-    func editButtonTapped() {
+    static func editButtonTapped() {
         let editButtonTappedParams: [String: String] = [
             "event": "click",
             "screen": "Main",
             "item": "edit"]
-        report(event: "editButtonTappedParams", params: editButtonTappedParams)
+        AnalyticsService.report(event: "editButtonTappedParams", params: editButtonTappedParams)
     }
 
-    func deleteButtonTapped() {
+    static func deleteButtonTapped() {
         let deleteButtonTappedParams: [String: String] = [
             "event": "click",
             "screen": "Main",
             "item": "delete"]
-        report(event: "deleteButtonTapped", params: deleteButtonTappedParams)
+        AnalyticsService.report(event: "deleteButtonTapped", params: deleteButtonTappedParams)
     }
 }

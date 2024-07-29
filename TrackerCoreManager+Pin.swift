@@ -89,6 +89,7 @@ extension TrackerCoreManager {
     func unpinTracker(indexPath: IndexPath) {
         guard let tracker = pinnedTrackersFetchedResultsController?.object(at: indexPath) else {
             print("Smth is going wrong"); return }
+        print(tracker)
         tracker.isPinned = false
         print("Tracker is Unpinned")
         save()
@@ -141,8 +142,6 @@ extension TrackerCoreManager {
             let result = try context.fetch(request)
             let tracker = result[indexPath.row]
             return tracker
-            //            print("result \(result)")
-            //            print("tracker \(tracker.name), \(tracker.id)")
         } catch {
             print(error.localizedDescription)
             return nil
