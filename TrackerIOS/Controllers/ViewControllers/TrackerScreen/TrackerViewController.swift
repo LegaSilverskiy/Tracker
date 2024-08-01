@@ -121,7 +121,7 @@ final class TrackerViewController: UIViewController {
            if isDataEmpty {
                emptyDataPlaceholderView.configure(isSearchMode: isSearchMode)
                showEmptyDataPlaceholder()
-               hideFilterButton()
+               
            } else {
                hideEmptyDataPlaceholder()
                showFilterButton()
