@@ -12,7 +12,7 @@ import CoreData
 public class TrackerRecordCoreData: NSManagedObject {
     
     @NSManaged public var date: String?
-    @NSManaged public var id: UUID?
+    @NSManaged public var id: String?
     @NSManaged public var tracker: TrackerCoreData?
     
     @nonobjc public class func fetchRequest() -> NSFetchRequest<TrackerRecordCoreData> {

@@ -57,8 +57,17 @@ final class EditingTrackerViewController: UIViewController {
 
     var indexPath: IndexPath?
 
-    var trackerId: UUID?
+    var trackerId: String?
+    
+    var categoryHeader = String() {
+        didSet {
+            categoryNameClosure?(categoryHeader)
+        }
+    }
+    var categoryNameClosure: ( (String) -> Void )?
 
+    var updateCategoryNameClosure: ( () -> Void )?
+    
     var updateSaveButton: ( () -> Void )?
 
     var emojiIndexPath: IndexPath? {
@@ -75,7 +84,7 @@ final class EditingTrackerViewController: UIViewController {
 
     var isPinned = false
 
-    func getBackToMainScreen() {
+    private func getBackToMainScreen() {
         let cancelCreatingTrackerNotification = Notification.Name("cancelCreatingTracker")
         NotificationCenter.default.post(name: cancelCreatingTrackerNotification, object: nil)
     }
@@ -91,7 +100,7 @@ final class EditingTrackerViewController: UIViewController {
 
         let newTask = TrackerCategory(
             header: category,
-            trackers: [Tracker(id: UUID(),
+            trackers: [Tracker(id: UUID().uuidString,
                                name: name,
                                color: color,
                                emoji: emoji,
@@ -115,7 +124,7 @@ final class EditingTrackerViewController: UIViewController {
 
     func getTrackerDataForEditing(tracker: TrackerCoreData) {
         guard let trackerID = tracker.id else { return }
-        let countOfDays = MainHelper.countOfDaysForTheTrackerInString(trackerId: trackerID.uuidString)
+        let countOfDays = MainHelper.countOfDaysForTheTrackerInString(trackerId: trackerID)
 
         trackerId = tracker.id
         trackerName = tracker.name
@@ -178,6 +187,13 @@ final class EditingTrackerViewController: UIViewController {
     func isCategoryChanged() -> Bool {
         return category != initialTrackerCategory
     }
+    
+    func doneButtonTapped(newCategoryHeader: String) {
+        coreDataManager.renameCategory(header: self.categoryHeader, newHeader: newCategoryHeader)
+        let renameCategoryNotification = Notification.Name("renameCategory")
+        NotificationCenter.default.post(name: renameCategoryNotification, object: nil)
+        updateCategoryNameClosure?()
+    }
 
     func changeTrackerCategory(tracker: TrackerCoreData) {
         guard let category,
@@ -207,9 +223,6 @@ final class EditingTrackerViewController: UIViewController {
         coreDataManager.createNewTracker(newTracker: trackerWithAnotherCategory)
 
         coreDataManager.deleteTrackerFromCategory(categoryName: initialTrackerCategory, trackerIDToDelete: id)
-
-        //        let allDataAfter = coreDataManager.fetchData()
-        //        print("allData after: \(allDataAfter)")
 
     }
 

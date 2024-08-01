@@ -14,17 +14,9 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction,
                                 configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         
-        var chosenCollection: UICollectionView?
-        let touchPoint = interaction.location(in: view)
+        var chosenCollection = trackersCollectionView
+        let touchPoint = interaction.location(in: trackersCollectionView)
         
-        if stickyCollectionView.frame.contains(touchPoint) {
-            chosenCollection = stickyCollectionView
-        } else if trackersCollectionView.frame.contains(touchPoint) {
-            chosenCollection = trackersCollectionView
-        }
-        
-        
-        guard let chosenCollection else { return nil}
         let convertedLocation = chosenCollection.convert(location, from: interaction.view)
         guard let indexPath = chosenCollection.indexPathForItem(at: convertedLocation) else {
             print("We have a problem with editing a tracker")
@@ -55,16 +47,34 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
     
     // MARK: - Pin
     func setupPinAction(collection: UICollectionView, indexPath: IndexPath) -> UIAction {
-        let title = collection == trackersCollectionView ? "Pin" : "Unpin"
+        
+        let trackersCategories = getTrackerCategories()
+        let trackerID = trackersCategories[indexPath.section].trackers[indexPath.item].id
+        
+        let title = trackersCategories[indexPath.section].header == "Pinned" ? "Unpin": "Pin"
+
+        
         let pinAction = UIAction(title: title.localized()) { [weak self] _ in
             guard let self else { return }
             
-            if collection == trackersCollectionView {
-                coreDataManager.pinTracker(indexPath: indexPath)
+            if indexPath.section == 0 && trackersCategories.first?.header == "Pinned" {
+                coreDataManager.unpinTracker(trackerID: trackerID)
             } else {
-                coreDataManager.unpinTracker(indexPath: indexPath)
+                coreDataManager.pinTracker(trackerID: trackerID)
             }
-            dataUpdated?()
+            
+            switch filterStr {
+            case "Completed":
+                showCompletedTrackers()
+            case "Today trackers":
+            // TODO: DODELAT
+                print("DODELAT")
+            case "Not completed":
+                // TODO: DODELAT
+                print("DODELAT")
+            default:
+                dataUpd()
+            }
         }
         return pinAction
     }
@@ -119,12 +129,20 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
         let deleteAction = UIAlertAction(title: NSLocalizedString("Delete", comment: "Delete tracker"), style: .destructive) { [weak self] _ in
             guard let self = self else { return }
             
-            if collection == trackersCollectionView {
-                coreDataManager.deleteTracker(at: indexPath)
-                trackersCollectionView.reloadData()
-            } else {
-                deletePinnedTracker(indexPath: indexPath)
-                stickyCollectionView.reloadData()
+            let trackerID = getTrackerCategories()[indexPath.section].trackers[indexPath.item].id
+            coreDataManager.deleteTrackerWithID(trackerID: trackerID)
+            
+            switch filterStr {
+            case "Completed":
+                showCompletedTrackers()
+            case "Today trackers":
+            // TODO: DODELAT
+                print("DODELAT")
+            case "Not completed":
+                // TODO: DODELAT
+                print("DODELAT")
+            default:
+                dataUpd()
             }
         }
         
@@ -136,7 +154,7 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
     private func deletePinnedTracker(indexPath: IndexPath) {
         guard
             let tracker = coreDataManager.getPinnedTrackerWithIndexPath(indexPath: indexPath),
-            let trackerID = tracker.id?.uuidString else {
+            let trackerID = tracker.id else {
             print("Some problems")
             return
         }

@@ -228,15 +228,21 @@ final class UnregularEventViewController: UIViewController {
         }
     }
     
-//MARK: Actions
+    private func getBackToMainScreen() {
+        let cancelCreatingTrackerNotification = Notification.Name("cancelCreatingTracker")
+        NotificationCenter.default.post(name: cancelCreatingTrackerNotification, object: nil)
+    }
+    
+    //MARK: Actions
     @objc private func createButtonTapped(_ sender: UIButton) {
         guard let selectedCategory = selectedCategory,
               let name = nameTracker.text,
               let selectedColor = selectedColor,
               let selectedEmoji = selectedEmoji else { print("Что-то пошло не так"); return }
         
-        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: selectedColor, emoji: selectedEmoji, schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс")])
+        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID().uuidString, name: name, color: selectedColor, emoji: selectedEmoji, schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс")])
         coreDataManager.createNewTracker(newTracker: newTask)
+        getBackToMainScreen()
         informAnotherVCofCreatingTracker?()
     }
     
@@ -278,16 +284,16 @@ extension UnregularEventViewController: UITableViewDataSource {
 extension UnregularEventViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let viewModel = CategoriesViewModel()
-            let navigationCategories = CategoriesViewController(viewModel: viewModel)
-            let navigation = UINavigationController(rootViewController: navigationCategories)
-            viewModel.updateCategory = { [weak self] categoryName in
-                guard let self = self,
-                      let cell = tableView.cellForRow(at: indexPath) else { return }
-                cell.detailTextLabel?.text = categoryName
-                self.selectedCategory = categoryName
-                self.isCreateButtonEnable()
-            }
-            present(navigation, animated: true)
+        let navigationCategories = CategoriesViewController(viewModel: viewModel)
+        let navigation = UINavigationController(rootViewController: navigationCategories)
+        viewModel.updateCategory = { [weak self] categoryName in
+            guard let self = self,
+                  let cell = tableView.cellForRow(at: indexPath) else { return }
+            cell.detailTextLabel?.text = categoryName
+            self.selectedCategory = categoryName
+            self.isCreateButtonEnable()
+        }
+        present(navigation, animated: true)
         
     }
 }

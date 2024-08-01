@@ -230,7 +230,7 @@ final class CreateHabitViewController: UIViewController {
         }
     }
     
-    func getBackToMainScreen() {
+    private func getBackToMainScreen() {
         let cancelCreatingTrackerNotification = Notification.Name("cancelCreatingTracker")
         NotificationCenter.default.post(name: cancelCreatingTrackerNotification, object: nil)
     }
@@ -244,8 +244,9 @@ final class CreateHabitViewController: UIViewController {
               let selectedSchedule = selectedSchedule else { print("Что-то пошло не так"); return }
             let color = selectedColor
         
-        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: selectedSchedule)])
+        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID().uuidString, name: name, color: color, emoji: selectedEmoji, schedule: selectedSchedule)])
         coreDataManager.createNewTracker(newTracker: newTask)
+        getBackToMainScreen()
         informAnotherVCofCreatingTracker?()
         
     }

@@ -75,21 +75,16 @@ extension TrackerCoreManager {
 
         setupPinnedFetchResultControllerWithRequest(request: request)
     }
-
-    func pinTracker(indexPath: IndexPath) {
-        guard let tracker = trackersFetchedResultsController?.object(
-            at: indexPath) else {
-            print("Smth is going wrong")
-            return }
+    
+    func pinTracker(trackerID: String) {
+        guard let tracker = trackersFetchedResultsController?.fetchedObjects?.first(where: { $0.id == trackerID }) else { return }
         tracker.isPinned = true
         print("Tracker is Pinned ✅")
         save()
     }
-
-    func unpinTracker(indexPath: IndexPath) {
-        guard let tracker = pinnedTrackersFetchedResultsController?.object(at: indexPath) else {
-            print("Smth is going wrong"); return }
-        print(tracker)
+    
+    func unpinTracker(trackerID: String) {
+        guard let tracker = pinnedTrackersFetchedResultsController?.fetchedObjects?.first(where: { $0.id == trackerID }) else { return }
         tracker.isPinned = false
         print("Tracker is Unpinned")
         save()
@@ -130,6 +125,28 @@ extension TrackerCoreManager {
             return []
         }
     }
+    
+    func getAllPinnedTrackersCategories() -> [TrackerCategory] {
+            let request = TrackerCategoryCoreData.fetchRequest()
+            let predicate = NSPredicate(format: "ANY %K == %@",
+                                        #keyPath(TrackerCategoryCoreData.trackers.isPinned), NSNumber(value: true))
+            request.predicate = predicate
+
+            let sort = NSSortDescriptor(key: "header", ascending: true)
+            request.sortDescriptors = [sort]
+
+            do {
+                let allTrackers = try context.fetch(request)
+                let result = transformCoreDataToModel(trackerCategoryCoreData: allTrackers)
+
+                //            print("result \(result)")
+
+                return result
+            } catch {
+                print(error.localizedDescription)
+                return []
+            }
+        }
 
     func getPinnedTrackerWithIndexPath(indexPath: IndexPath) -> TrackerCoreData? {
         let request = TrackerCoreData.fetchRequest()

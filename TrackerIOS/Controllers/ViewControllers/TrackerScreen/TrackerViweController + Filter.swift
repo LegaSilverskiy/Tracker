@@ -29,8 +29,9 @@ extension TrackerViewController: FilterCategoryDelegate {
     func showAllTrackersForThisDay() {
         getPinnedTrackersForToday()
         getTrackersForWeekDay(weekDay: weekDay)
-        dataUpdated?()
+        dataUpd()
         blueFilterButtonBackgroundColor()
+        configureEmptyDataPlaceholderVisability()
     }
 
     func getPinnedTrackersForToday() {
@@ -47,7 +48,8 @@ extension TrackerViewController: FilterCategoryDelegate {
         getTrackersForToday()
         setDateForDatePicker()
         changeFilterButtonBackgroundColor()
-        dataUpdated?()
+        dataUpd()
+        configureEmptyDataPlaceholderVisability()
     }
 
     func getTrackersForToday() {
@@ -73,14 +75,7 @@ extension TrackerViewController: FilterCategoryDelegate {
     
     // MARK: - Фильтр "Завершенные"
     func showCompletedTrackersForDay() {
-
-        if completedTrackersID.isEmpty {
-            showEmptyCollections()
-        } else {
-            getCompletedPinnedTrackers(completedTrackers: completedTrackersID)
-            getCompletedTrackers(completedTrackers: completedTrackersID)
-        }
-        dataUpdated?()
+        showCompletedTrackers()
         changeFilterButtonBackgroundColor()
     }
 
@@ -107,7 +102,8 @@ extension TrackerViewController: FilterCategoryDelegate {
             getIncompletePinnedTrackers(trackerNotToShow: completedTrackersID)
             getIncompleteTrackers(trackerNotToShow: completedTrackersID)
         }
-        dataUpdated?()
+//        dataUpdated?()
+        dataUpd()
         changeFilterButtonBackgroundColor()
     }
 
