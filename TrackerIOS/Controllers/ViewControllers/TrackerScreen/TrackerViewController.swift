@@ -216,7 +216,7 @@ final class TrackerViewController: UIViewController {
         
         // если есть запининые трекеры
         if !pinnedTrackers.isEmpty {
-            categories.append(TrackerCategory(header: "Pinned", trackers: pinnedTrackers))
+            categories.append(TrackerCategory(header: NSLocalizedString("Pinned", comment: ""), trackers: pinnedTrackers))
         }
         
         let tackersWithCategories = coreDataManager.fetchData()

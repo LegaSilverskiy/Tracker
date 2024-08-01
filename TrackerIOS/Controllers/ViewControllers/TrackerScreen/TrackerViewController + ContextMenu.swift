@@ -51,13 +51,13 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
         let trackersCategories = getTrackerCategories()
         let trackerID = trackersCategories[indexPath.section].trackers[indexPath.item].id
         
-        let title = trackersCategories[indexPath.section].header == "Pinned" ? "Unpin": "Pin"
+        let title = trackersCategories[indexPath.section].header == NSLocalizedString("Pinned", comment: "") ? "Unpin": "Pin"
 
         
         let pinAction = UIAction(title: title.localized()) { [weak self] _ in
             guard let self else { return }
             
-            if indexPath.section == 0 && trackersCategories.first?.header == "Pinned" {
+            if indexPath.section == 0 && trackersCategories.first?.header == NSLocalizedString("Pinned", comment: "") {
                 coreDataManager.unpinTracker(trackerID: trackerID)
             } else {
                 coreDataManager.pinTracker(trackerID: trackerID)
