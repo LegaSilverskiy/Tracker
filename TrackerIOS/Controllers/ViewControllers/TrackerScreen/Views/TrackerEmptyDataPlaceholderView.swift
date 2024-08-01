@@ -39,9 +39,7 @@ final class TrackerEmptyDataPlaceholderView: UIView {
     }
     
     private func configureView() {
-        // uslovno
-        // backgroundColor = .red
-        // itd
+        backgroundColor = .systemBackground
     }
     
     private func addSubviews() {

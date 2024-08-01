@@ -67,11 +67,9 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
             case "Completed":
                 showCompletedTrackers()
             case "Today trackers":
-            // TODO: DODELAT
-                print("DODELAT")
+                showTodayTrackers()
             case "Not completed":
-                // TODO: DODELAT
-                print("DODELAT")
+                showUncompletedTrackers()
             default:
                 dataUpd()
             }
@@ -139,7 +137,7 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
             // TODO: DODELAT
                 print("DODELAT")
             case "Not completed":
-                // TODO: DODELAT
+                showUncompletedTrackers()
                 print("DODELAT")
             default:
                 dataUpd()

@@ -18,7 +18,7 @@ final class TrackerViewController: UIViewController {
     private var categories = [TrackerCategory]()
     private var isSearchMode = false
     private var filteredData: [TrackerCategory] = []
-    private var completedTrackers: [TrackerRecord]?
+    private var completedTrackers: [TrackerCategory]?
     
     var filterStr: String?
     var isFilter = false
@@ -116,7 +116,7 @@ final class TrackerViewController: UIViewController {
     
     // MARK: - EMPTY DATA PLACEHOLDER
        func configureEmptyDataPlaceholderVisability() {
-           let isDataEmpty = coreDataManager.isCoreDataEmpty
+           let isDataEmpty = categories.isEmpty
            
            if isDataEmpty {
                emptyDataPlaceholderView.configure(isSearchMode: isSearchMode)
@@ -234,37 +234,43 @@ final class TrackerViewController: UIViewController {
         }
     }
     
+    // MARK: - RECORDED & UNRECORDED TRACKERS
+    private func findRecordedUnrecordedTrackersByID(allTrackersCD: [TrackerCoreData], recordedTrackerIDs: [String], isRecorded: Bool) -> [Tracker] {
+        
+        var allTrackers: [Tracker] = []
+        
+        allTrackersCD.forEach { trackerCD in
+            let tracker = Tracker(coreDataObject: trackerCD)
+            allTrackers.append(tracker)
+        }
+        
+        let recordedSet = Set(recordedTrackerIDs)
+        var resultTrackers: [Tracker] = []
+        
+        if isRecorded {
+            resultTrackers = allTrackers.filter { recordedSet.contains($0.id) }
+        } else {
+            resultTrackers = allTrackers.filter { !recordedSet.contains($0.id) }
+        }
+        
+        return resultTrackers
+    }
+    
     func showCompletedTrackers() {
-        var completedTrackerss: [Tracker] = []
+        
         let dateString = dateToString(date: Date())
-        let trackersIDs = coreDataManager.getAllTrackerRecordForDate(date: dateString)
+        let recordedTrackersIDs = getCompletedTrackers()
         
         guard let unpinnedTrackers = coreDataManager.trackersFetchedResultsController?.fetchedObjects else { return }
         guard let pinnedTrackers = coreDataManager.pinnedTrackersFetchedResultsController?.fetchedObjects else { return }
+
+        let allTrackers = unpinnedTrackers + pinnedTrackers
+        let recordedTrackers = findRecordedUnrecordedTrackersByID(allTrackersCD: allTrackers, recordedTrackerIDs: recordedTrackersIDs, isRecorded: true)
         
-        unpinnedTrackers.forEach { trackerCD in
-            let tracker = Tracker(coreDataObject: trackerCD)
-            trackersIDs.forEach { trackerID in
-                guard let id = trackerID else { return }
-                if tracker.id == id {
-                    completedTrackerss.append(tracker)
-                }
-            }
-        }
-        
-        pinnedTrackers.forEach { trackerCD in
-            let tracker = Tracker(coreDataObject: trackerCD)
-            trackersIDs.forEach { trackerID in
-                guard let id = trackerID else { return }
-                if tracker.id == id {
-                    completedTrackerss.append(tracker)
-                }
-            }
-        }
-        
-        if !completedTrackerss.isEmpty {
-            categories = [.init(header: "Completed trackers", trackers: completedTrackerss)]
+        if !recordedTrackers.isEmpty {
+            categories = [.init(header: NSLocalizedString("Completed trackers", comment: ""), trackers: recordedTrackers)]
         } else {
+            isSearchMode = true
             categories = []
         }
         
@@ -276,11 +282,32 @@ final class TrackerViewController: UIViewController {
     
     func showUncompletedTrackers() {
         
+        let dateString = dateToString(date: Date())
+        let recordedTrackersIDs = getCompletedTrackers()
+        
+        guard let unpinnedTrackers = coreDataManager.trackersFetchedResultsController?.fetchedObjects else { return }
+        guard let pinnedTrackers = coreDataManager.pinnedTrackersFetchedResultsController?.fetchedObjects else { return }
+
+        let allTrackers = unpinnedTrackers + pinnedTrackers
+        let unrecordedTrackers = findRecordedUnrecordedTrackersByID(allTrackersCD: allTrackers, recordedTrackerIDs: recordedTrackersIDs, isRecorded: false)
+        
+        if !unrecordedTrackers.isEmpty {
+            categories = [.init(header: NSLocalizedString("Uncompleted trackers", comment: ""), trackers: unrecordedTrackers)]
+        } else {
+            isSearchMode = true
+            categories = []
+        }
+        
+        DispatchQueue.main.async {
+            self.trackersCollectionView.reloadData()
+            self.configureEmptyDataPlaceholderVisability()
+        }
     }
     
     func showTodayTrackers() {
         
     }
+
     
     // MARK: - Actions
     @objc private func addNewTracker(_ sender: UIButton) {

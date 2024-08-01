@@ -199,11 +199,11 @@
 		EB01630D2C596BBA00939209 /* TrackerScreen */ = {
 			isa = PBXGroup;
 			children = (
+				EB01630B2C59671E00939209 /* TrackerViewController.swift */,
 				EBF0D5FD2C50CA2700A3030A /* TrackerViewController + ContextMenu.swift */,
 				EBF0D6162C53970100A3030A /* TrackerViweController + Filter.swift */,
 				EB0163142C59879800939209 /* TrackerCollection */,
 				EB01630E2C596BD300939209 /* Views */,
-				EB01630B2C59671E00939209 /* TrackerViewController.swift */,
 			);
 			path = TrackerScreen;
 			sourceTree = "<group>";

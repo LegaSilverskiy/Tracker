@@ -34,11 +34,10 @@ extension TrackerViewController: UICollectionViewDataSource {
             case "Completed":
                 self?.showCompletedTrackers()
             case "Today trackers":
-            // TODO: DODELAT
                 print("DODELAT")
             case "Not completed":
-                // TODO: DODELAT
-                print("DODELAT")
+                print("Dodelat unpin")
+                self?.showUncompletedTrackers()
             default:
                 self?.dataUpd()
             }

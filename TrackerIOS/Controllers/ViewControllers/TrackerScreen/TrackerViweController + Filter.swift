@@ -17,10 +17,14 @@ extension TrackerViewController: FilterCategoryDelegate {
         isFilter = true
         filterStr = filter
         switch filter {
-        case NSLocalizedString("All trackers", comment: ""): showAllTrackersForThisDay()
-        case NSLocalizedString("Today trackers", comment: ""): showAllTrackersForToday()
-        case NSLocalizedString("Completed", comment: ""): showCompletedTrackersForDay()
-        case NSLocalizedString("Not completed", comment: ""): showIncompleteTrackersForDay()
+        case NSLocalizedString("All trackers", comment: ""):
+            showAllTrackersForThisDay()
+        case NSLocalizedString("Today trackers", comment: ""):
+            showAllTrackersForToday()
+        case NSLocalizedString("Completed", comment: ""):
+            showCompletedTrackersForDay()
+        case NSLocalizedString("Not completed", comment: ""):
+            showUncompletedTrackers()
         default: dismiss(animated: true)
         }
     }
@@ -51,7 +55,7 @@ extension TrackerViewController: FilterCategoryDelegate {
         dataUpd()
         configureEmptyDataPlaceholderVisability()
     }
-
+//TODO: - Получаю все трекеры по конкретному дню
     func getTrackersForToday() {
         let todayWeekDayString = getTodayWeekday()
         getTrackersForWeekDay(weekDay: todayWeekDayString)
@@ -99,19 +103,19 @@ extension TrackerViewController: FilterCategoryDelegate {
             getPinnedTrackersForToday()
             getTrackersForWeekDay(weekDay: weekDay)
         } else {
-            getIncompletePinnedTrackers(trackerNotToShow: completedTrackersID)
-            getIncompleteTrackers(trackerNotToShow: completedTrackersID)
+            getUncompletePinnedTrackers(trackerNotToShow: completedTrackersID)
+            getUncompleteTrackers(trackerNotToShow: completedTrackersID)
         }
 //        dataUpdated?()
         dataUpd()
         changeFilterButtonBackgroundColor()
     }
 
-    func getIncompletePinnedTrackers(trackerNotToShow: [String]) {
+    func getUncompletePinnedTrackers(trackerNotToShow: [String]) {
         coreDataManager.getInCompletePinnedTracker(trackerNotToShow: trackerNotToShow)
     }
 
-    func getIncompleteTrackers(trackerNotToShow: [String]) {
+    func getUncompleteTrackers(trackerNotToShow: [String]) {
         coreDataManager.getTrackersExceptWithID(trackerNotToShow: completedTrackersID, weekDay: weekDay)
     }
 

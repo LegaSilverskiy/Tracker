@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct Tracker {
+struct Tracker: Hashable {
     let id: String
     let name: String
     let color: String
