@@ -1,0 +1,60 @@
+/*
+  Localizable.strings
+  TrackerIOS
+
+  Created by Олег Серебрянский on 7/18/24.
+  
+*/
+
+"Trackers and events can be grouped together in meaning" = "Привычки и события можно объединить по смыслу";
+"Add a category" = "Добавить категорию";
+"Are you sure you want to delete the tracker?" = "Уверены что хотите удалить трекер?";
+"Category" = "Категория";
+"Track only what you want" = "Отслеживайте только то, что хотите";
+"Even if it's not water and yoga" = "Даже если это не литры воды и йога";
+"What a great technology!" = "Вот это технологии!";
+"Trackers" = "Трекеры";
+"Tracker" = "Трекер";
+"All trackers" = "Все трекеры";
+"Today trackers" = "Трекеры на сегодня";
+"Creating a tracker" = "Создание Трекера";
+"Enter tracker's name" = "Введите название трекера";
+"Completed" = "Завершенные";
+"Statistics" = "Статистика";
+"What are we going to track?" = "Что будем отслеживать?";
+"Search" = "Поиск";
+"Nothing found" = "Ничего не найдено";
+"Tracker" = "Трекеры";
+"One-time event" = "Нерегулярные события";
+"Filter" = "Фильтр";
+"Not completed" = "Не завершенные";
+"Cancel" = "Отмена";
+"Create" = "Создать";
+"Pinned" = "Закрепленные";
+"Pin" = "Закрепить";
+"Unpin" = "Открепить";
+"Edit" = "Редактировать";
+"Delete" = "Удалить";
+"Completed trackers" = "Завершенные трекеры";
+"Uncompleted trackers" = "Незавершенные трекеры";
+"New tracker" = "Новая привычка";
+"Something went wrong" = "Что-то пошло не так";
+"Schedule" = "Расписание";
+"Enter new category name" = "Введите название категории";
+"Done" = "Готово";
+"Monday" = "Понедельник";
+"Tuesday" = "Вторник";
+"Wednesday" = "Среда";
+"Thursday" = "Четверг";
+"Friday" = "Пятница";
+"Saturday" = "Суббота";
+"Sunday" = "Воскресенье";
+"Everyday" = "Каждый день";
+"Mon" = "Пн";
+"Tue" = "Вт";
+"Wed" = "Ср";
+"Thu" = "Чт";
+"Fri" = "Пт";
+"Sat" = "Сб";
+"Sun" = "Вс";
+

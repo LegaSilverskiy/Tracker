@@ -9,7 +9,7 @@ import Foundation
 
 struct TrackerCategory {
     let header: String
-    let trackers: [Tracker]
+    var trackers: [Tracker]
 }
 
 extension TrackerCategory {

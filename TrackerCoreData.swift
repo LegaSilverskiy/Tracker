@@ -13,9 +13,10 @@ public class TrackerCoreData: NSManagedObject {
     
     @NSManaged public var colorName: String?
     @NSManaged public var emoji: String?
-    @NSManaged public var id: UUID?
+    @NSManaged public var id: String?
     @NSManaged public var name: String?
     @NSManaged public var schedule: String?
+    @NSManaged public var isPinned: Bool
     @NSManaged public var category: TrackerCategoryCoreData?
     @NSManaged public var trackerRecord: TrackerRecordCoreData?
     
